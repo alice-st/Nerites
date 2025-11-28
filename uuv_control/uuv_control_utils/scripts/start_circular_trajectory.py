@@ -74,6 +74,7 @@ def main():
 
         params[label] = node.get_parameter(label).value
 
+    params['center'] = params['center'].split(",")
     if len(params['center']) != 3:
         node.get_logger().error(
             'Center of circle must have 3 components (x, y, z): ' + str(params['center']))

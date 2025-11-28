@@ -19,5 +19,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .actuator_manager import ActuatorManager
 from .fin_model import FinModel
+from .actuator_manager import ActuatorManager

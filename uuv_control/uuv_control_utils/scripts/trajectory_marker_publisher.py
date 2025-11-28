@@ -50,7 +50,7 @@ class TrajectoryMarkerPublisher(Node):
             Trajectory, 'trajectory', self._update_trajectory, 10)
 
         self._waypoints_sub = self.create_subscription(
-            WaypointSet,'waypoints', self._update_waypoints, 10)
+            WaypointSet, 'waypoints', self._update_waypoints, 10)
 
         # Vehicle state flags
         self._is_auto_on = False

@@ -59,16 +59,20 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('lambda'):
             coeffs = self.get_parameter('lambda').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 6:
                 self._lambda = np.array(coeffs)
             else:
-                raise RuntimeError('lambda coefficients: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('lambda coefficients: 6 coefficients needed')
+
         print('lambda=', self._lambda)
 
         if self.has_parameter('rho_constant'):
             coeffs = self.get_parameter('rho_constant').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 6:
                 self._rho_constant = np.array(coeffs)
@@ -79,6 +83,8 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('k'):
             coeffs = self.get_parameter('k').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 6:
                 self._k = np.array(coeffs)
@@ -89,6 +95,8 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('c'):
             coeffs = self.get_parameter('c').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 6:
                 self._c = np.array(coeffs)
@@ -99,6 +107,8 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('adapt_slope'):
             coeffs = self.get_parameter('adapt_slope').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 3:
                 self._adapt_slope = np.array(coeffs)
@@ -109,6 +119,8 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('rho_0'):
             coeffs = self.get_parameter('rho_0').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if len(coeffs) == 6:
                 self._rho_0 = np.array(coeffs)
@@ -119,9 +131,11 @@ class ROV_MB_SMController(DPControllerBase):
 
         if self.has_parameter('drift_prevent'):
             scalar = self.get_parameter('drift_prevent').value
+            if isinstance(coeffs, list) and len(coeffs) == 1 and isinstance(coeffs[0], str):
+                coeffs = coeffs[0].split(",")
             coeffs = [float(c) for c in coeffs]
             if not isinstance(scalar, list):
-                self._drift_prevent = scalar
+                self._drift_prevent = float(scalar)
             else:
                 raise RuntimeError('drift_prevent needs to be a scalar value')
 

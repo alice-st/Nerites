@@ -11,13 +11,9 @@ from launch import LaunchDescription
 from launch.launch_description_sources import AnyLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 from launch.actions import DeclareLaunchArgument
-from launch.actions import GroupAction
-from launch.actions import OpaqueFunction
-from launch.actions import IncludeLaunchDescription
+from launch.actions import GroupAction, OpaqueFunction, IncludeLaunchDescription
 from launch.substitutions import LaunchConfiguration as Lc
-
 import launch_testing.actions
-
 from ament_index_python.packages import get_package_share_directory
 
 import os
@@ -26,20 +22,15 @@ import xacro
 
 from plankton_utils.time import is_sim_time
 
-
 def to_bool(value: str):
     if isinstance(value, bool):
         return value
     if not isinstance(value, str):
         raise ValueError('String to bool, invalid type ' + str(value))
-
-    valid = {'true':True, '1':True,
-             'false':False, '0':False}
-    
+    valid = {'true':True, '1':True, 'false':False, '0':False}
     if value.lower() in valid:
         return valid[value]
-    
-    raise ValueError('String to bool, invalid value: %s' % value)
+    raise ValueError(f'Invalid value for conversion to bool: {value}')
 
 
 # =============================================================================
@@ -81,33 +72,38 @@ def launch_setup(context, *args, **kwargs):
             # Create directory if required and sub-directory
             os.makedirs(path)
         except OSError:
-            print ("Creation of the directory %s failed" % path)
+            print(f"Creation of the directory {path} failed")
     
-    output = os.path.join(
-        path,
-        'robot_description.urdf'
-    )
 
     if not pathlib.Path(xacro_file).exists():
         exc = 'Launch file ' + xacro_file + ' does not exist'
         raise Exception(exc)
     
+    # Prepare mappings for xacro
     mapping = {}
     if to_bool(use_world_ned):
-        mappings={'debug': debug, 'namespace': namespace, 'inertial_reference_frame':'world_ned'}
+        mappings={'debug': debug, 
+                  'namespace': namespace, 
+                  'inertial_reference_frame':'world_ned'}
     else:
-        mappings={'debug': debug, 'namespace': namespace, 'inertial_reference_frame':'world'}
+        mappings={'debug': debug, 
+                  'namespace': namespace, 
+                  'inertial_reference_frame':'world'}
     
+    #Process xacro into URDF XML string
     doc = xacro.process(xacro_file, mappings=mappings)
          
+    output = os.path.join(path, 'robot_description.urdf')
     if is_write_on_disk:
         with open(output, 'w') as file_out:
             file_out.write(doc)
     
     # URDF spawner
-    args=('-gazebo_namespace /gazebo '
-        '-x %s -y %s -z %s -R %s -P %s -Y %s -entity %s -topic robot_description' 
-        %(x, y, z, roll, pitch, yaw, namespace)).split()
+    args = (
+        f"-gazebo_namespace /gazebo "
+        f"-x {x} -y {y} -z {z} "
+        f"-R {roll} -P {pitch} -Y {yaw} "
+        f"-entity {namespace} -topic robot_description").split()
 
     # Urdf spawner. NB: node namespace does not prefix the spawning service, 
     # as using a leading /
@@ -122,7 +118,6 @@ def launch_setup(context, *args, **kwargs):
     )
 
     # A joint state publisher plugin already is started with the model, no need to use the default joint state publisher
-
     # N.B.: alternative way to generate a robot_description string:
     # string = str('ros2 run xacro xacro ' + xacro_file + ' debug:=false namespace:=' + namespace + ' inertial_reference_frame:=world')
     # cmd = Command(string)
@@ -133,24 +128,29 @@ def launch_setup(context, *args, **kwargs):
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output = 'screen',
-        parameters=[{'use_sim_time': res}, {'robot_description': doc}], # Use subst here
+        parameters=[{'use_sim_time': res}, 
+                    {'robot_description': doc}], # Use subst here
     )
 
     # Message to tf
     message_to_tf_launch = os.path.join(
         get_package_share_directory('uuv_assistants'),
         'launch',
-        'message_to_tf.launch'
+        'message_to_tf.launch.py'
     )
 
     if not pathlib.Path(message_to_tf_launch).exists():
         exc = 'Launch file ' + message_to_tf_launch + ' does not exist'
         raise Exception(exc)
 
-    launch_args = [('namespace', namespace), ('world_frame', 'world'), 
-            ('child_frame_id', '/' + namespace + '/base_link'), ('use_sim_time', str(res).lower()),]
+    launch_args = [('namespace', namespace), 
+                   ('world_frame', 'world'), 
+                   ('child_frame_id', '/' + namespace + '/base_link'),  
+                   ('use_sim_time', str(res).lower())]
+
     message_to_tf_launch = IncludeLaunchDescription(
-            AnyLaunchDescriptionSource(message_to_tf_launch), launch_arguments=launch_args)
+            AnyLaunchDescriptionSource(message_to_tf_launch), 
+            launch_arguments=launch_args)
 
    
     group = GroupAction([
@@ -164,22 +164,18 @@ def launch_setup(context, *args, **kwargs):
 
 # =============================================================================
 def generate_launch_description():
-    # TODO Try LaunchContext ?
     return LaunchDescription([
         DeclareLaunchArgument('debug', default_value='0'),
-
         DeclareLaunchArgument('x', default_value='0'),
         DeclareLaunchArgument('y', default_value='0'),
-        DeclareLaunchArgument('z', default_value='-20'),
+        DeclareLaunchArgument('z', default_value='-10'),
         DeclareLaunchArgument('roll', default_value='0.0'),
         DeclareLaunchArgument('pitch', default_value='0.0'),
         DeclareLaunchArgument('yaw', default_value='0.0'),
-
-        DeclareLaunchArgument('mode', default_value='default'),
-        DeclareLaunchArgument('namespace', default_value='rexrov'),
+        DeclareLaunchArgument('namespace', default_value='x300'),
         DeclareLaunchArgument('use_ned_frame', default_value='false'),
         DeclareLaunchArgument('write_file_on_disk', default_value='false'),
-
+        DeclareLaunchArgument('mode', default_value='default'),
         # DeclareLaunchArgument('use_sim_time', default_value='true'),
         OpaqueFunction(function = launch_setup)
     ])

@@ -25,7 +25,6 @@ from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from std_msgs.msg import Header
 from rclpy.node import Node 
 
-
 class Thruster(object):
     """Abstract function to all the thruster models avaialble. 
     The instance of a thruster model must use the factory method.

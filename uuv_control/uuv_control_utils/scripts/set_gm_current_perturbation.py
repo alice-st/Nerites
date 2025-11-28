@@ -28,9 +28,8 @@ from plankton_utils.time import is_sim_time
 
 def main():
     rclpy.init()
-
     sim_time_param = is_sim_time()
-    
+
     node = rclpy.create_node(
         'set_gm_current_perturbation', 
         allow_undeclared_parameters=True, 

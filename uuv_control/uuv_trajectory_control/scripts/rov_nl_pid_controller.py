@@ -50,7 +50,8 @@ class ROV_NLPIDController(DPPIDControllerBase):
         # Feedback acceleration gain
         self._Hm = np.eye(6)
         if self.has_parameter('Hm'):
-            hm = self.get_parameter('Hm').value
+            hm = self.get_parameter('Hm').value[0].split(",")
+            hm = [float(val) for val in hm]
             if len(hm) == 6:
                 self._Hm = self._vehicle_model.Mtotal +  np.diag(hm)
             else:

@@ -28,23 +28,44 @@ import rclpy
 from rclpy.node import Node
 
 from uuv_auv_control_allocator.msg import AUVCommand
-from uuv_auv_actuator_interface import ActuatorManager
+from uuv_auv_actuator_interface import FinModel
+import uuv_auv_actuator_interface
+import sys
 
 from plankton_utils.time import time_in_float_sec
 from plankton_utils.time import is_sim_time
+import tf2_ros
+import threading
+import traceback
+from plankton_utils.param_helper import parse_nested_params_to_dict, \
+                                        get_parameter_or_helper
+from utils.transform import get_world_ned_to_enu
+from uuv_thrusters.models import Thruster
 
+MAX_FINS = 4
 
-# TODO Probably refactor
-class AUVControlAllocator(ActuatorManager):
-    def __init__(self, node_name, **kwargs):
-        #super(AUVControlAllocator, self).__init__()
-        ActuatorManager.__init__(
-            node_name, 
-            **kwargs
-        )
-        
-        # Retrieve the output file path to store the CAM
-        # matrix for future use
+class AUVControlAllocator(Node):
+    def __init__(self, name, world_ned_to_enu=None, **kwargs):
+        super().__init__(name,
+                        allow_undeclared_parameters=True, 
+                        automatically_declare_parameters_from_overrides=True,
+                        **kwargs)
+
+        self.namespace = self.get_namespace().replace('/', '')
+        self.get_logger().info('Initialize control allocator for vehicle <%s>' % self.namespace)  
+        self.base_link = self.get_parameter_or_helper('base_link', 'base_link').get_parameter_value().string_value
+
+        self.tf_buffer = tf2_ros.Buffer()
+        self.listener = tf2_ros.TransformListener(self.tf_buffer, self)
+        self.base_link_ned_to_enu = self.get_trans_ned_to_enu()
+
+        self.thruster_config, self.thruster_topic = self.get_thruster_config()
+        self.thruster = None
+
+        self.fin_config, self.fin_upper_limit, self.fin_lower_limit = self.get_fin_config()
+        self.fins = dict()
+        self.n_fins = 0
+
         self.output_dir = None
         if self.has_parameter('output_dir'):
             self.output_dir = self.get_parameter('output_dir').get_parameter_value().string_value
@@ -52,12 +73,12 @@ class AUVControlAllocator(ActuatorManager):
                 raise RuntimeError(
                     'Invalid output directory, output_dir=' + self.output_dir)
             self.get_logger().info('output_dir=' + str(self.output_dir))
-
-        self.update_rate = self.get_parameter('update_rate', 10).value
+        
+        self.update_rate = self.get_parameter('update_rate').value
         if self.update_rate <= 0:
             raise RuntimeError('Update rate must be a positive number')
 
-        self.timeout = self.get_parameter('timeout', -1).value       
+        self.timeout = self.get_parameter('timeout').value       
 
         # Control allocation matrix for thruster and fin lift forces
         self.u = casadi.SX.sym('u')
@@ -65,54 +86,114 @@ class AUVControlAllocator(ActuatorManager):
         self.delta = None
         self.output_tau = casadi.SX.sym('tau', 6, 1)
         self.actuator_model = 0
-
         self.input_surge_speed = 0.0
         self.input_tau = np.zeros(6)        
 
-        if not self.init():
-            raise RuntimeError('No thruster and/or fins found')
-      
-        self.sub = self.create_subscription(AUVCommand, 'control_input', self.control_callback, 10)
-
-        # NB : no spin before, the sim time clock() is automatically 0
-        self.last_update = time_in_float_sec(self.get_clock().now())
-
-        rate = self.create_rate(self.update_rate)
-        thread = threading.Thread(target=rclpy.spin, args=(self,), daemon=True)
-        thread.start()
-        while rclpy.ok():
-            #rclpy.spin_once(self)
-            if self.timeout > -1:
-                if time_in_float_sec(self.get_clock().now()) - self.last_update > self.timeout:
-                    self.input_surge_speed = 0.0
-                    self.input_tau = np.zeros(6)            
-            output = self.allocate(self.input_tau, self.input_surge_speed)            
-            self.publish_commands(output)
-            rate.sleep()
+        self._ready = False
+        self.init_future = rclpy.Future()
+        self.init_thread = threading.Thread(target=self._init_async, daemon=True)
+        self.init_thread.start()
 
     # =========================================================================
-    def init(self):
+    def _init_async(self):
+        try:
+            self._init_async_impl()
+        except Exception as e:
+            self.get_logger().error('Caught exception: ' + repr(e))
+            traceback.print_exc()
+    
+    # =========================================================================
+    def _init_async_impl(self):
         """Calculate the control allocation matrix, if one is not given."""
+        self.get_logger().info('ControlAllocator: updating thruster poses')
+        base = '%s/%s' % (self.namespace, self.base_link)
+        frame = '%s/%s%d' % (self.namespace, self.thruster_config['frame_base'], 0)
+        # base = "world"
+        # frame = "eca_a9/base_link"
+        self.get_logger().info('Lookup: Thruster transform found %s -> %s' % (base, frame))
+        trans = self.tf_buffer.lookup_transform(base, frame, rclpy.time.Time(), rclpy.time.Duration(seconds=5))
+       
+        pos = np.array([trans.transform.translation.x,
+                           trans.transform.translation.y,
+                           trans.transform.translation.z])
+        quat = np.array([trans.transform.rotation.x,
+                            trans.transform.rotation.y,
+                            trans.transform.rotation.z,
+                            trans.transform.rotation.w])
+        
+
+        self.get_logger().info('pos=' + str(pos))
+        self.get_logger().info('rot=' + str(quat))
                 
-        # Build the casadi model
-        self.delta = casadi.SX.sym('delta', self.n_fins)
-        actuator_model = self.thruster.tam_column.reshape((6, 1)) * self.thrust
-        for i in self.fins:
-            f_lift = (0.5 * self.fin_config['fluid_density'] * 
-                self.fin_config['lift_coefficient'] * self.fin_config['fin_area'] *  
-                self.delta[i] * self.u**2)
-        
-            f_lift = f_lift * self.fins[i].lift_vector
-            t_lift = casadi.cross(self.fins[i].pos, f_lift)
+        self.thruster = Thruster.create_thruster(
+            self,
+            self.thruster_config['conversion_fcn'], 0, 
+            self.thruster_topic, pos, quat, 
+            **self.thruster_config['conversion_fcn_params'])
 
-            actuator_model += casadi.vertcat(f_lift, t_lift)
+        for i in range(MAX_FINS):
+            try:
+                frame = '%s/%s%d' % (self.namespace, self.fin_config['frame_base'], i)
 
-        self.cost_function = casadi.norm_2(self.output_tau - actuator_model)
+                self.get_logger().info('Lookup: Fin transform found %s -> %s' % (base, frame))
+                trans = self.tf_buffer.lookup_transform(base, frame, rclpy.time.Time(), rclpy.time.Duration(seconds=1))
+                pos = np.array([trans.transform.translation.x,
+                                   trans.transform.translation.y,
+                                   trans.transform.translation.z])
+                quat = np.array([trans.transform.rotation.x,
+                                    trans.transform.rotation.y,
+                                    trans.transform.rotation.z,
+                                    trans.transform.rotation.w])                
+                self.get_logger().info('Fin transform found %s -> %s' % (base, frame))
+                self.get_logger().info('pos=' + str(pos))
+                self.get_logger().info('quat=' + str(quat))
+
+                fin_topic = self.build_topic_name(self.namespace, 
+                    self.fin_config['topic_prefix'], i, self.fin_config['topic_suffix'])
+
+                self.get_logger().info(uuv_auv_actuator_interface.__file__)
+                self.fins[i] = FinModel(i, pos, quat, fin_topic, self)
+
+            except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
+                self.get_logger().info('Could not get transform from %s to %s ' % (base, frame))
+                break
+
+        self.n_fins = len(self.fins.keys())
+        self.get_logger().info('# fins found: %d' % len(self.fins.keys()))
         
-        return True
+        for i in range(self.n_fins):
+            self.get_logger().info(f"{i}")
+            self.get_logger().info(f"{self.fins[i].pos}")
+            self.get_logger().info(f"{self.fins[i].rot}")
+
+
+        if not self.init_control_allocation_matrix():
+            raise RuntimeError('No thruster and/or fins found')
+        
+        self.sub = self.create_subscription(AUVCommand, 'control_input', self.control_callback, 10)
+        self.get_logger().info('Alice SM controller: ready')
+        self.init_future.set_result(True)
+
 
     # =========================================================================
-    def allocate(self, tau, u):        
+    def control_callback(self, msg):
+        self.input_surge_speed = msg.surge_speed
+        self.input_tau = np.array([msg.command.force.x, 
+                                   msg.command.force.y,
+                                   msg.command.force.z,
+                                   msg.command.torque.x, 
+                                   msg.command.torque.y,
+                                   msg.command.torque.z])  
+
+        if 'ned' in msg.header.frame_id:
+            self.input_tau[0:3] = np.dot(self.base_link_ned_to_enu, self.input_tau[0:3])
+            self.input_tau[4::] = np.dot(self.base_link_ned_to_enu, self.input_tau[4::])
+        output = self.allocate(self.input_tau, self.input_surge_speed)  
+        self.get_logger().info(f"{output}")   
+        self.publish_commands(output)
+    
+    # =========================================================================
+    def allocate(self, tau, u):
         output = np.zeros(self.n_fins + 1)
 
         if self.input_surge_speed == 0:
@@ -139,41 +220,165 @@ class AUVControlAllocator(ActuatorManager):
             
             for i in range(self.n_fins + 1):
                 output[i] = sol['x'][i]
+
         return output
 
-    # =========================================================================
-    def control_callback(self, msg):
-        self.input_surge_speed = msg.surge_speed
-        self.input_tau = np.array([msg.command.force.x, 
-                                   msg.command.force.y,
-                                   msg.command.force.z,
-                                   msg.command.torque.x, 
-                                   msg.command.torque.y,
-                                   msg.command.torque.z])  
 
-        if 'ned' in msg.header.frame_id:
-            self.input_tau[0:3] = np.dot(self.base_link_ned_to_enu, self.input_tau[0:3])
-            self.input_tau[4::] = np.dot(self.base_link_ned_to_enu, self.input_tau[4::])
+    def get_trans_ned_to_enu(self):
+        tf_trans_ned_to_enu = None
+        try:
+            if self.namespace != '':
+                target = '{}/base_link'.format(self.namespace)
+                source = '{}/base_link_ned'.format(self.namespace)
+            else:
+                target = 'base_link'
+                source = 'base_link_ned'
+            self.get_logger().info('Lookup transfrom from %s to %s' % (source, target))
+            tf_trans_ned_to_enu = self.tf_buffer.lookup_transform(target, source, rclpy.time.Time(), rclpy.time.Duration(seconds=1))
+        except Exception as e:
+            self.get_logger().warning('No transform found between base_link and base_link_ned'
+                  ' for vehicle {}, message={}'.format(self.namespace, e))
+            base_link_ned_to_enu = None
+
+        if tf_trans_ned_to_enu is not None:
+            base_link_ned_to_enu = quaternion_matrix(
+                (tf_trans_ned_to_enu.transform.rotation.x,
+                 tf_trans_ned_to_enu.transform.rotation.y,
+                 tf_trans_ned_to_enu.transform.rotation.z,
+                 tf_trans_ned_to_enu.transform.rotation.w))[0:3, 0:3]
+
+            self.get_logger().warning('base_link transform NED to ENU=\n{}'.format(base_link_ned_to_enu))
+
+        return base_link_ned_to_enu
+
+    #=======================================================================================
+    def get_thruster_config(self):
+        # Retrieve the thruster configuration parameters
+        thruster_config = self.get_parameters_by_prefix('thruster_config')
+        if len(thruster_config) == 0:
+            raise RuntimeError('Thruster configuration not available') 
         
-        self.last_update = self.get_clock().now()
+        #Parse parameters to dictionary and unpack params to values
+        thruster_config = parse_nested_params_to_dict(thruster_config, '.', True)
 
-      
+        # Check if all necessary thruster model parameter are available
+        thruster_params = ['conversion_fcn_params', 'conversion_fcn',
+            'topic_prefix', 'topic_suffix', 'frame_base', 'max_thrust']
+        for p in thruster_params:
+            if p not in thruster_config:
+                raise RuntimeError(
+                    'Parameter <%s> for thruster conversion function is missing' % p)
+
+        # Setting up the thruster topic name
+        thruster_topic = self.build_thruster_topic_name(self.namespace,
+            thruster_config['topic_prefix'], 0,
+            thruster_config['topic_suffix'])
+        
+        return thruster_config, thruster_topic
+
+    #======================================================================================================
+    def get_fin_config(self):
+        fin_config = self.get_parameters_by_prefix('fin_config')
+        if len(fin_config) == 0:
+            raise RuntimeError('Fin configuration is not available')
+
+        fin_config = parse_nested_params_to_dict(fin_config, '.', True)
+
+        # Check if all necessary fin parameters are available
+        fin_params = ['fluid_density', 'lift_coefficient', 'fin_area', 
+            'topic_prefix', 'topic_suffix', 'frame_base']
+        
+        for p in fin_params:
+            if p not in fin_config:
+                raise RuntimeError(
+                    'Parameter <%s> for fin configuration is missing' % p)
+        
+        fin_lower_limit = -np.pi / 2
+        if 'lower_limit' in fin_config:
+            fin_lower_limit = fin_config['lower_limit']
+
+        fin_upper_limit = np.pi / 2
+        if 'upper_limit' in fin_config:
+            fin_upper_limit = fin_config['upper_limit']
+
+        if fin_config['lower_limit'] >= fin_config['upper_limit']:
+            raise RuntimeError('Fin angle limits are invalid')
+
+        return fin_config, fin_upper_limit, fin_lower_limit
+        
+
+    # =========================================================================
+    def init_control_allocation_matrix(self):
+        """Calculate the control allocation matrix, if one is not given."""
+        # Build the casadi model
+        self.delta = casadi.SX.sym('delta', self.n_fins)
+        actuator_model = self.thruster.tam_column.reshape((6, 1)) * self.thrust
+        for i in self.fins:
+            f_lift = (0.5 * self.fin_config['fluid_density'] * 
+                self.fin_config['lift_coefficient'] * self.fin_config['fin_area'] *  
+                self.delta[i] * self.u**2)
+        
+            f_lift = f_lift * self.fins[i].lift_vector
+            t_lift = casadi.cross(self.fins[i].pos, f_lift)
+
+            actuator_model += casadi.vertcat(f_lift, t_lift)
+
+        self.cost_function = casadi.norm_2(self.output_tau - actuator_model)
+        
+        return True
+
+    # =========================================================================
+    def publish_commands(self, command):
+        self.thruster.publish_command(float(command[0]))
+        for i in range(self.n_fins):
+            self.fins[i].publish_command(float(command[i + 1]))
+
+    #==========================================================================
+    def get_parameter_or_helper(self, name, default_value):
+        return get_parameter_or_helper(self, name, default_value)
+
+    # =========================================================================
+    def build_thruster_topic_name(self, namespace, topic_prefix, id, topic_suffix) -> str:
+        return '/%s/%s/id_%d/%s' %  (namespace, topic_prefix, id, topic_suffix)
+
+    # =========================================================================
+    def build_fin_topic_name(self, topic_prefix, id, topic_suffix) -> str:
+        return '%s/id_%d/%s' % (topic_prefix, id, topic_suffix)
+
+    # =========================================================================
+    def to_dict_vect3(self, *args) -> dict:
+        return { 'x': args[0], 'y': args[1], 'z': args[2] }
+
+    # =========================================================================
+    def to_dict_quat(self, *args) -> dict:
+        return { 'x': args[0], 'y': args[1], 'z': args[2], 'w': args[3] }
+    
+        # =========================================================================
+    def build_topic_name(self, namespace, topic_prefix, id, topic_suffix):
+        return '/%s/%s/id_%d/%s' %  (namespace, topic_prefix, 0, topic_suffix)
+
+
 # =============================================================================
 def main():
     rclpy.init()
 
     try:
         sim_time_param = is_sim_time()
+        tf_world_ned_to_enu = get_world_ned_to_enu(sim_time_param)
 
-        node = AUVControlAllocator('auv_control_allocator', parameter_overrides=[sim_time_param])
-        
-    except rclpy.ROSInterruptException:
-        print('AUVControlAllocator::ROSInterruptException Exception')
+        node = AUVControlAllocator(name='auv_control_allocator', 
+                                   world_ned_to_enu=tf_world_ned_to_enu,
+                                   parameter_overrides=[sim_time_param])
+        rclpy.spin(node)
+
+    except KeyboardInterrupt:
+        print('AUVControlAllocator::KeyboardInterrupt Exception')
     except Exception as e:
         print('Caught exception: ' + str(e))
     finally:
         if rclpy.ok():
             rclpy.shutdown()
+
     print('Leaving AUVControlAllocator')
 
 

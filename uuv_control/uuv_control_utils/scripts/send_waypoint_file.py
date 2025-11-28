@@ -75,6 +75,7 @@ def main():
     init_wp = node.create_client(InitWaypointsFromFile, srv_name)
     
     ready = init_wp.wait_for_service(timeout_sec=30)
+    
     if not ready:
         raise RuntimeError('Service not available! Closing node...')
     
@@ -94,8 +95,7 @@ def main():
     except Exception as e:
         node.get_logger().error('Service call ' + srv_name + ' failed, error=' + repr(e))
     else:
-        node.get_logger().info('Waypoints file successfully received, '
-                      'filename=%s' % filename)
+        node.get_logger().info('Waypoints file successfully received, filename=%s' % filename)
 
     node.destroy_node()
 

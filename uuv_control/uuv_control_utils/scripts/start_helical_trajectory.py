@@ -72,6 +72,9 @@ def main():
 
         params[label] = node.get_parameter(label).value
 
+    params['center'] = params['center'].split(",")
+    params['center'] = [float(val) for val in params['center']]
+    
     if len(params['center']) != 3:
         raise RuntimeError(
         'Center of circle must have 3 components (x, y, z):' + str(params['center']))

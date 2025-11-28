@@ -1,0 +1,18 @@
+Controller demos:
+
+1. Start a controller:
+
+ros2 launch uuv_gazebo start_mb_smc_demo.launch.py
+ros2 launch uuv_gazebo start_nl_pid_demo.launch.py
+ros2 launch uuv_gazebo start_nmb_smc_demo.launch.py
+ros2 launch uuv_gazebo record_demo.launch.py
+ros2 launch uuv_gazebo start_nmb_smc_demo_with_teleop.launch.py --to revisit
+ros2 launch uuv_gazebo start_pid_demo_with_teleop.launch.py --to revisit
+
+2. Send waypoints:
+
+ros2 launch uuv_control_utils send_waypoints_file.launch uuv_name:=rexrov
+
+3. Add disturbances:
+
+ros2 launch uuv_gazebo start_disturbance_demo.launch.py uuv_name:=rexrov

@@ -37,17 +37,11 @@ from uuv_thrusters.models import Thruster
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from uuv_control_msgs.msg import TrajectoryPoint
 from uuv_control_interfaces import DPControllerLocalPlanner
-#from tf_quaternion.transformations import quaternion_matrix
-from tf_quaternion.transformations import quaternion_multiply
-from tf_quaternion.transformations import quaternion_inverse
-from tf_quaternion.transformations import euler_from_quaternion
+from tf_quaternion.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion
+from plankton_utils.param_helper import parse_nested_params_to_dict, get_parameter_or_helper
+from plankton_utils.time import is_sim_time, time_in_float_sec
 
-from plankton_utils.param_helper import parse_nested_params_to_dict, \
-                                        get_parameter_or_helper
-from plankton_utils.time import is_sim_time
-from plankton_utils.time import time_in_float_sec
 from utils.transform import get_world_ned_to_enu
-
 
 class AUVGeometricTrackingController(Node):
     def __init__(self, name, world_ned_to_enu=None,**kwargs):
@@ -60,7 +54,7 @@ class AUVGeometricTrackingController(Node):
         # self.set_parameters([sim_time])
 
         self.namespace = self.get_namespace().replace('/', '')
-        self.get_logger().info('Initialize control for vehicle <%s>' % self.namespace)
+        self.get_logger().info(f'Initialize control for vehicle <{self.namespace}>')
 
         self.local_planner = DPControllerLocalPlanner(self, full_dof=True, thrusters_only=False,
             stamped_pose_only=False, tf_trans_world_ned_to_enu=world_ned_to_enu)
@@ -68,12 +62,13 @@ class AUVGeometricTrackingController(Node):
         self.base_link = self.get_parameter_or_helper('base_link', 'base_link').get_parameter_value().string_value
 
         # Reading the minimum thrust generated
-        self.min_thrust = self.get_parameter_or_helper('min_thrust', 0.0).value
+        self.min_thrust = float(self.get_parameter_or_helper('min_thrust', 0.0).value)
         assert self.min_thrust >= 0
+
         self.get_logger().info('Min. thrust [N]=%.2f' % self.min_thrust)
 
         # Reading the maximum thrust generated
-        self.max_thrust = self.get_parameter_or_helper('max_thrust', 0.0).value
+        self.max_thrust = float(self.get_parameter_or_helper('max_thrust', 0.0).value)
         assert self.max_thrust > 0 and self.max_thrust > self.min_thrust
         self.get_logger().info('Max. thrust [N]=%.2f' % self.max_thrust)
 
@@ -82,56 +77,62 @@ class AUVGeometricTrackingController(Node):
         assert len(self.thruster_topic) > 0
 
         # Reading the thruster gain
-        self.p_gain_thrust = self.get_parameter_or_helper('thrust_p_gain', 0.0).value
+        self.p_gain_thrust = float(self.get_parameter_or_helper('thrust_p_gain', 0.0).value)
         assert self.p_gain_thrust > 0
 
-        self.d_gain_thrust = self.get_parameter_or_helper('thrust_d_gain', 0.0).value
+        self.d_gain_thrust = float(self.get_parameter_or_helper('thrust_d_gain', 0.0).value)
         assert self.d_gain_thrust >= 0
 
         # Reading the roll gain
-        self.p_roll = self.get_parameter_or_helper('p_roll', 0.0).value
-        assert self.p_roll > 0
+        self.p_roll = float(self.get_parameter_or_helper('p_roll', 0.0).value)
+        assert self.p_roll >= 0
 
         # Reading the pitch P gain
-        self.p_pitch = self.get_parameter_or_helper('p_pitch', 0.0).value
-        assert self.p_pitch > 0
+        self.p_pitch = float(self.get_parameter_or_helper('p_pitch', 0.0).value)
+        assert self.p_pitch >= 0
 
         # Reading the pitch D gain
-        self.d_pitch = self.get_parameter_or_helper('d_pitch', 0.0).value
+        self.d_pitch = float(self.get_parameter_or_helper('d_pitch', 0.0).value)
         assert self.d_pitch >= 0
 
         # Reading the yaw P gain
-        self.p_yaw = self.get_parameter_or_helper('p_yaw', 0.0).value
-        assert self.p_yaw > 0
+        self.p_yaw = float(self.get_parameter_or_helper('p_yaw', 0.0).value)
+        assert self.p_yaw >= 0
 
         # Reading the yaw D gain
-        self.d_yaw = self.get_parameter_or_helper('d_yaw', 0.0).value
+        self.d_yaw = float(self.get_parameter_or_helper('d_yaw', 0.0).value)
         assert self.d_yaw >= 0
 
         # Reading the saturation for the desired pitch
-        self.desired_pitch_limit = self.get_parameter_or_helper('desired_pitch_limit', 15 * np.pi / 180).value
+        self.desired_pitch_limit = float(self.get_parameter_or_helper('desired_pitch_limit', 15 * np.pi / 180).value)
         assert self.desired_pitch_limit > 0
 
         # Reading the saturation for yaw error
-        self.yaw_error_limit = self.get_parameter_or_helper('yaw_error_limit', 1.0).value
+        self.yaw_error_limit = float(self.get_parameter_or_helper('yaw_error_limit', 1.0).value)
         assert self.yaw_error_limit > 0
 
         # Reading the number of fins
-        self.n_fins = self.get_parameter_or_helper('n_fins', 0).get_parameter_value().integer_value
+        self.n_fins = int(self.get_parameter_or_helper('n_fins', 0).value)
+
         assert self.n_fins > 0
 
         # Reading the mapping for roll commands
         self.map_roll = self.get_parameter_or_helper('map_roll', [0, 0, 0, 0]).value
+        self.map_roll = [float(val) for val in self.map_roll]
         assert isinstance(self.map_roll, list)
         assert len(self.map_roll) == self.n_fins
 
         # Reading the mapping for the pitch commands
-        self.map_pitch = self.get_parameter_or_helper('map_pitch', [0, 0, 0, 0]). value
+        self.map_pitch = self.get_parameter_or_helper('map_pitch', [0, 0, 0, 0]).value
+        self.map_pitch = [float(val) for val in self.map_pitch]
+
         assert isinstance(self.map_pitch, list)
         assert len(self.map_pitch) == self.n_fins
         
         # Reading the mapping for the yaw commands
         self.map_yaw = self.get_parameter_or_helper('map_yaw', [0, 0, 0, 0]).value
+        self.map_yaw = [float(val) for val in self.map_yaw]
+
         assert isinstance(self.map_yaw, list)
         assert len(self.map_yaw) == self.n_fins
 
@@ -153,12 +154,9 @@ class AUVGeometricTrackingController(Node):
         self.thruster_topic = self.build_thruster_topic_name(self.namespace,
             self.thruster_config['topic_prefix'], 0,
             self.thruster_config['topic_suffix'])
-        # self.thruster_topic = '/%s/%s/id_%d/%s' %  (self.namespace,
-        #     self.thruster_config['topic_prefix'], 0,
-        #     self.thruster_config['topic_suffix'])
 
-        self.max_fin_angle = self.get_parameter_or_helper('max_fin_angle', 0.0).value
-        assert self.max_fin_angle > 0
+        self.max_fin_angle = float(self.get_parameter_or_helper('max_fin_angle', 0.0).value)
+        assert self.max_fin_angle >= 0
 
         # Reading the fin input topic prefix
         self.fin_topic_prefix = self.get_parameter_or_helper('fin_topic_prefix', 'fins').get_parameter_value().string_value
@@ -190,7 +188,6 @@ class AUVGeometricTrackingController(Node):
     # =========================================================================
     def _init_async_impl(self):
         base = '%s/%s' % (self.namespace, self.base_link)
-
         frame = '%s/%s%d' % (self.namespace, self.thruster_config['frame_base'], 0)
 
         self.get_logger().info('Lookup: Thruster transform found %s -> %s' % (base, frame))
@@ -395,7 +392,6 @@ def main():
 
     try:
         sim_time_param = is_sim_time()
-
         tf_world_ned_to_enu = get_world_ned_to_enu(sim_time_param)
         
         node = AUVGeometricTrackingController(

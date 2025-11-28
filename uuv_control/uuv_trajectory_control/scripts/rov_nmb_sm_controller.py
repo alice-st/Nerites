@@ -65,6 +65,13 @@ class ROV_NMB_SMController(DPControllerBase):
 
         if self.has_parameter('K'):
             coefs = self.get_parameter('K').value
+            
+            if isinstance(coefs, list) and len(coefs) == 1 and isinstance(coefs[0], str):
+                coefs = coefs[0].split(",")
+            elif isinstance(coefs, str):
+                coefs = coefs.split(",")
+            coefs = [float(c) for c in coefs]
+
             if len(coefs) == 6:
                 self._K = np.array(coefs)
             else:
@@ -75,6 +82,12 @@ class ROV_NMB_SMController(DPControllerBase):
 
         if self.has_parameter('Kd'):
             coefs = self.get_parameter('Kd').value
+            if isinstance(coefs, list) and len(coefs) == 1 and isinstance(coefs[0], str):
+                coefs = coefs[0].split(",")
+            elif isinstance(coefs, str):
+                coefs = coefs.split(",")
+            coefs = [float(c) for c in coefs]
+
             if len(coefs) == 6:
                 self._Kd = np.array(coefs)
             else:
@@ -85,6 +98,13 @@ class ROV_NMB_SMController(DPControllerBase):
 
         if self.has_parameter('Ki'):
             coefs = self.get_parameter('Ki').value
+            if isinstance(coefs, list) and len(coefs) == 1 and isinstance(coefs[0], str):
+                coefs = coefs[0].split(",")
+            elif isinstance(coefs, str):
+                coefs = coefs.split(",")
+
+            # Convert to floats
+            coefs = [float(c) for c in coefs]
             if len(coefs) == 6:
                 self._Ki = np.array(coefs)
             else:
@@ -94,6 +114,14 @@ class ROV_NMB_SMController(DPControllerBase):
 
         if self.has_parameter('slope'):
             coefs = self.get_parameter('slope').value
+            if isinstance(coefs, list) and len(coefs) == 1 and isinstance(coefs[0], str):
+                coefs = coefs[0].split(",")
+            elif isinstance(coefs, str):
+                coefs = coefs.split(",")
+
+            # Convert to floats
+            coefs = [float(c) for c in coefs]
+
             if len(coefs) == 6:
                 self._slope = np.array(coefs)
             else:

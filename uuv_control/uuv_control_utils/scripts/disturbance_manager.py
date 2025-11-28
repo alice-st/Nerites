@@ -53,7 +53,6 @@ class DisturbanceManager(Node):
         # self._logger.addHandler(out_hdlr)
         # self._logger.setLevel(logging.INFO)
         self.get_logger().info('Starting disturbance manager')
-
         self.thread = None
 
         # Load disturbances and check for missing information
@@ -72,6 +71,7 @@ class DisturbanceManager(Node):
         # self._logger.info(str(self.get_parameters(['/'])))
         self._disturbances = self.get_parameters_by_prefix('disturbances')
         self._disturbances = parse_nested_params_to_dict(self._disturbances, unpack_value=True)
+        
         if self._disturbances != {}:
             for key in self._disturbances.keys():
                 item = self._disturbances[key]
@@ -189,10 +189,10 @@ class DisturbanceManager(Node):
             t = time_in_float_sec(self.get_clock().now())
 
             remove_dist = []
-
             #for i in range(len(self._disturbances)):
             for key, d in self._disturbances.items():
                 #d = self._disturbances[i]
+
                 if t > d['starting_time'] and not d['is_applied']:
                     ###########################################################
                     if d['type'] == 'current':
@@ -200,6 +200,8 @@ class DisturbanceManager(Node):
                                          d['vertical_angle'])
                     ###########################################################
                     elif d['type'] == 'wrench':
+                        d["force"] = [float(value) for value in d["force"]] 
+                        d["torque"] = [float(value) for value in d["torque"]] 
                         self.set_link_wrench(d['force'],
                                              d['torque'],
                                              -1,
@@ -383,9 +385,8 @@ class DisturbanceManager(Node):
 
 
 # =============================================================================
-def main():
-    rclpy.init() 
-    
+def main(args=None):
+    rclpy.init(args=args) 
     node = None
     try:
         sim_time_param = is_sim_time()

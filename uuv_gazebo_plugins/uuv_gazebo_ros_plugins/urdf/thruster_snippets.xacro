@@ -126,12 +126,6 @@
     </gazebo>
   </xacro:macro>
 
-  <!--
-    Thruster model with first order dynamic model for the rotor dynamics
-    and a proportional non-linear steady-state conversion from the rotor
-    angular velocity to output thrust force
-  -->
-
   <xacro:macro name="thruster_module_first_order_basic_fcn_macro"
       params="namespace
               thruster_id
@@ -148,5 +142,91 @@
       <xacro:thruster_cf_basic_macro rotor_constant="${rotor_constant}"/>
     </xacro:generic_thruster_macro>
   </xacro:macro>
+  
+  <!--
+    Thruster model with first order dynamic model for the rotor dynamics
+    and a proportional non-linear steady-state conversion from the rotor
+    angular velocity to output thrust force
+    -->
+  <!-- X300 -->
+  <xacro:macro name="generic_thruster_macro_x300"
+      params="namespace
+              thruster_id
+              *origin
+              mesh_filename
+              spin_axis:='1 0 0'
+              thrust_axis
+              *dynamics
+              *conversion">
+      <joint name="${namespace}/thruster_${thruster_id}_joint" type="continuous">
+        <xacro:insert_block name="origin"/>
+        <!-- Spin axis is now configurable instead of hard-coded -->
+        <axis xyz="${spin_axis}"/>
+        <parent link="${namespace}/base_link"/>
+        <child link="${namespace}/thruster_${thruster_id}"/>
+      </joint>
 
-</robot>
+      <link name="${namespace}/thruster_${thruster_id}">
+        <xacro:box_inertial x="0" y="0" z="0" mass="0.001">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+        </xacro:box_inertial>
+        <visual>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+          <geometry>
+            <mesh filename="${mesh_filename}" scale="1 1 1"/>
+          </geometry>
+        </visual>
+        <collision>
+          <!-- Gazebo needs a collision volume or it will ignore the pose of
+               the joint that leads to this link (and assume it to be the identity) -->
+          <geometry>
+            <cylinder length="0.000001" radius="0.000001"/>
+          </geometry>
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+        </collision>
+      </link>
+
+      <gazebo>
+        <plugin name="${namespace}_${thruster_id}_thruster_model" filename="libuuv_thruster_ros_plugin.so">
+          <linkName>${namespace}/thruster_${thruster_id}</linkName>
+          <jointName>${namespace}/thruster_${thruster_id}_joint</jointName>
+          <thrusterID>${thruster_id}</thrusterID>
+          <xacro:insert_block name="dynamics"/>
+          <xacro:insert_block name="conversion"/>
+        </plugin>
+      </gazebo>
+
+      <gazebo reference="${namespace}/thruster_${thruster_id}">
+        <selfCollide>false</selfCollide>
+      </gazebo>
+  </xacro:macro>
+
+
+  <xacro:macro name="thruster_module_first_order_basic_fcn_macro_x300"
+      params="namespace
+              thruster_id
+              *origin
+              mesh_filename
+              dyn_time_constant
+              rotor_constant
+              thrust_axis:='1 0 0'
+              spin_axis:='1 0 0'">
+              
+    <xacro:generic_thruster_macro_x300
+        namespace="${namespace}"
+        thruster_id="${thruster_id}"
+        mesh_filename="${mesh_filename}"
+        spin_axis="${spin_axis}"
+        thrust_axis="${thrust_axis}">
+        
+        <xacro:insert_block name="origin"/>
+        <xacro:rotor_dyn_first_order_macro time_constant="${dyn_time_constant}"/>
+        <xacro:thruster_cf_basic_macro rotor_constant="${rotor_constant}"/>
+        
+    </xacro:generic_thruster_macro_x300>
+  </xacro:macro>
+
+
+  <!-- X300 -->
+  
+  </robot>

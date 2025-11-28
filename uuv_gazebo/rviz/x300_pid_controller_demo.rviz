@@ -1,0 +1,181 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 82
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /TF1/Frames1
+        - /Grid1
+        - /Odometry1
+        - /World models1
+        - /Waypoint path1
+      Splitter Ratio: 0.721476018
+    Tree Height: 552
+  - Class: rviz_common/Selection
+    Name: Selection
+  - Class: rviz_common/Tool Properties
+    Expanded:
+      - /2D Pose Estimate1
+      - /2D Nav Goal1
+      - /Publish Point1
+    Name: Tool Properties
+    Splitter Ratio: 0.588679016
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+  - Class: rviz_common/Time
+    Experimental: false
+    Name: Time
+    SyncMode: 0
+    SyncSource: Image
+
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        x300/base_footprint: {Value: true}
+        x300/base_link: {Value: true}
+        x300/base_stabilized: {Value: true}
+        x300/camera_link: {Value: true}
+        x300/dvl_link: {Value: true}
+        x300/dvl_sonar0_link: {Value: true}
+        x300/dvl_sonar1_link: {Value: true}
+        x300/dvl_sonar2_link: {Value: true}
+        x300/dvl_sonar3_link: {Value: true}
+        x300/imu_link: {Value: true}
+        x300/ned_link: {Value: true}
+        x300/pose_sensor_link: {Value: true}
+        x300/pressure_link: {Value: true}
+        x300/rpt_link: {Value: true}
+        x300/thruster_0: {Value: true}
+        x300/thruster_1: {Value: true}
+        x300/thruster_2: {Value: true}
+        x300/thruster_3: {Value: true}
+        x300/thruster_4: {Value: true}
+        x300/thruster_5: {Value: true}
+        x300/thruster_6: {Value: true}
+        x300/thruster_7: {Value: true}
+        world: {Value: true}
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          x300/base_footprint:
+            x300/base_stabilized:
+              x300/base_link: {}
+      Update Interval: 0
+      Value: true
+
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.03
+        Value: Lines
+      Name: Grid
+      Plane Cell Count: 10
+      Reference Frame: world
+      Value: true
+
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Image Topic: /x300/camera/camera_image
+      Name: Image
+      Queue Size: 2
+      Transport Hint: raw
+      Value: true
+
+    - Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Name: RobotModel
+      Robot Description: /x300/robot_description
+      Visual Enabled: true
+
+    - Class: rviz_default_plugins/Odometry
+      Enabled: true
+      Name: Odometry
+      Topic: /x300/pose_gt           # use /x300/pose_gt_ned if your Fixed Frame is world_ned
+      Color: 255; 25; 0
+      Value: true
+
+    - Class: rviz_default_plugins/Range
+      Enabled: true
+      Name: DVL - Sonar 0
+      Topic: /x300/dvl_sonar0
+      Value: true
+
+    - Class: rviz_default_plugins/Range
+      Enabled: true
+      Name: DVL - Sonar 1
+      Topic: /x300/dvl_sonar1
+      Value: true
+
+    - Class: rviz_default_plugins/Range
+      Enabled: true
+      Name: DVL - Sonar 2
+      Topic: /x300/dvl_sonar2
+      Value: true
+
+    - Class: rviz_default_plugins/Range
+      Enabled: true
+      Name: DVL - Sonar 3
+      Topic: /x300/dvl_sonar3
+      Value: true
+
+    - Class: rviz_default_plugins/Marker
+      Enabled: true
+      Marker Topic: /x300/current_velocity_marker
+      Name: Current Velocity Marker
+      Value: true
+
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Marker Topic: /world_models
+      Name: World models
+      Value: true
+
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Trajectory
+      Topic: /x300/trajectory_marker
+      Value: true
+
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Marker Topic: /x300/waypoint_markers
+      Name: Waypoints
+      Value: true
+
+    - Class: rviz_default_plugins/Path
+      Enabled: true
+      Name: Waypoint path
+      Topic: /x300/waypoint_path_marker
+      Value: true
+
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: world    # set to world_ned if your odom is NED
+    Frame Rate: 30
+
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Target Frame: x300/base_link
+      Distance: 55
+      Pitch: 0.59
+      Yaw: 4.06
+      Value: Orbit (rviz_default_plugins)

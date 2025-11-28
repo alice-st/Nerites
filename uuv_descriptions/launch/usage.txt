@@ -1,0 +1,15 @@
+Usage:
+1. Launch a gz world:
+
+ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
+
+2. Launch a vehicle:
+
+ros2 launch uuv_descriptions upload_rexrov_default.launch.py
+ros2 launch uuv_descriptions upload_rexrov.launch.py
+ros2 launch uuv_descriptions upload_rexrov_default_noisy_pose.launch.py
+
+Not working: 
+ros2 launch uuv_descriptions upload_rexrov_oberon4.launch.py  IS MISSING oberon4_description
+ros2 launch uuv_descriptions upload_rexrov_oberon7.launch.py IS MISSING oberon7_description
+ros2 launch uuv_descriptions upload_rexrov_oberon_arms.launch.py IS MISSING oberon4_description and oberon7_description

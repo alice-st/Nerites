@@ -1,12 +1,17 @@
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
-#
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 import rclpy.time
 from rclpy.clock import ClockType
 from rcl_interfaces.srv import GetParameters
 
 import time
-
+import random
+import os
+import string
 
 def time_in_float_sec(time: rclpy.time.Time):
     """
@@ -121,10 +126,6 @@ def __is_sim_time_node(timeout_sec=10, return_param=True, default_value=False):
                 )
             else:
                 return value
-        
-        import random
-        import os
-        import string
     
         node = None
 

@@ -133,7 +133,6 @@ class TrajectoryGenerator(object):
         are currently in use, then sample the interpolated path and return the
         poses only.
         """
-
         if self.points is None:
             return None
         msg = uuv_control_msgs.Trajectory()
@@ -147,6 +146,7 @@ class TrajectoryGenerator(object):
         for pnt in self.points:
             # FIXME Sometimes the time stamp of the point is NaN
             msg.points.append(pnt.to_message())
+        
         return msg
         
     # =========================================================================
@@ -274,8 +274,7 @@ class TrajectoryGenerator(object):
                 last_t = t
             else:
                 if t <= last_t:
-                    self._logger.error('Trajectory should be given a growing value '
-                                 'of time')
+                    self._logger.error('Trajectory should be given a growing value of time')
                     self._reset()
                     return False
             self.add_trajectory_point_from_msg(p_msg)
@@ -308,8 +307,7 @@ class TrajectoryGenerator(object):
         except:
             set_timestamps = False
             self._logger.warning(
-                'ROS node was not initialized, no timestamp '
-                'can be assigned to trajectory message')
+                'ROS node was not initialized, no timestamp can be assigned to trajectory message')
         msg.header.frame_id = 'world'
         #TODO Simplify following
         if not self.is_using_waypoints:
@@ -351,8 +349,7 @@ class TrajectoryGenerator(object):
         except:
             set_timestamps = False
             self._logger.warning(
-                'ROS node was not initialized, no timestamp '
-                'can be assigned to path message')
+                'ROS node was not initialized, no timestamp can be assigned to path message')
         path_msg.header.frame_id = 'world'
         path_msg.poses = list()
 

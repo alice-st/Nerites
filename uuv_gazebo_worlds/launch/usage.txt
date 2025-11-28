@@ -1,0 +1,13 @@
+Usage:
+
+ros2 launch uuv_gazebo_worlds empty_underwater_world.launch.py
+ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
+ros2 launch uuv_gazebo_worlds herkules_ship_wreck.launch.py
+ros2 launch uuv_gazebo_worlds lake.launch.py
+ros2 launch uuv_gazebo_worlds mangalia.launch.py
+ros2 launch uuv_gazebo_worlds munkholmen.launch.py
+ros2 launch uuv_gazebo_worlds ocean_waves.launch.py
+ros2 launch uuv_gazebo_worlds rov_bop_panel.launch.py
+ros2 launch uuv_gazebo_worlds subsea_bop_panel.launch.py
+
+ros2 launch uuv_gazebo_worlds mangalia_manipulation.launch.py ---NOT WORKING WELL ENOUGH

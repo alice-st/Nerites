@@ -49,31 +49,49 @@ class DPPIDControllerBase(DPControllerBase):
         if self.has_parameter('Kp'):
             # Use 'value' in case int values are specified instead of double
             Kp_diag = self.get_parameter('Kp').value
+            if isinstance(Kp_diag, list) and len(Kp_diag) == 1 and isinstance(Kp_diag[0], str):
+                Kp_diag = Kp_diag[0].split(",")
+            elif isinstance(Kp_diag, str):
+                Kp_diag = Kp_diag.split(",")
+            
+            Kp_diag = [float(c) for c in Kp_diag]
+
             if len(Kp_diag) == 6:
                 self._Kp = np.diag(Kp_diag)
             else:
-                raise RuntimeError('Kp matrix error: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('Kp matrix error: 6 coefficients needed')
 
         self._logger.info('Kp=' + str([self._Kp[i, i] for i in range(6)]))
 
         if self.has_parameter('Kd'):
+            # Use 'value' in case int values are specified instead of double
             Kd_diag = self.get_parameter('Kd').value
+            
+            if isinstance(Kd_diag, list) and len(Kd_diag) == 1 and isinstance(Kd_diag[0], str):
+                Kd_diag = Kd_diag[0].split(",")
+            elif isinstance(Kd_diag, str):
+                Kd_diag = Kd_diag.split(",")
+            Kd_diag = [float(c) for c in Kd_diag]
             if len(Kd_diag) == 6:
                 self._Kd = np.diag(Kd_diag)
             else:
-                raise RuntimeError('Kd matrix error: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('Kd matrix error: 6 coefficients needed')
 
         self._logger.info('Kd=' + str([self._Kd[i, i] for i in range(6)]))
 
         if self.has_parameter('Ki'):
             Ki_diag = self.get_parameter('Ki').value
+            
+            if isinstance(Ki_diag, list) and len(Ki_diag) == 1 and isinstance(Ki_diag[0], str):
+                Ki_diag = Ki_diag[0].split(",")
+            elif isinstance(Ki_diag, str):
+                Ki_diag = Ki_diag.split(",")
+            Ki_diag = [float(c) for c in Ki_diag]
+
             if len(Ki_diag) == 6:
                 self._Ki = np.diag(Ki_diag)
             else:
-                raise RuntimeError('Ki matrix error: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('Ki matrix error: 6 coefficients needed')
 
         self._logger.info('Ki=' + str([self._Ki[i, i] for i in range(6)]))
 
@@ -142,6 +160,4 @@ class DPPIDControllerBase(DPControllerBase):
         self._int += 0.5 * (self.error_pose_euler + self._error_pose) * self._dt
         # Store current pose error
         self._error_pose = self.error_pose_euler
-        return np.dot(self._Kp, self.error_pose_euler) \
-            + np.dot(self._Kd, self._errors['vel']) \
-            + np.dot(self._Ki, self._int)
+        return np.dot(self._Kp, self.error_pose_euler) + np.dot(self._Kd, self._errors['vel']) + np.dot(self._Ki, self._int)

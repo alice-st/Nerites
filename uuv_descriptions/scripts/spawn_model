@@ -69,9 +69,6 @@ model_database_template = """<sdf version="1.4">
 </sdf>"""
 
 
-
-
-
 #TODO Totally not sure...
 # Wrappers around the services provided by rosified gazebo
 from gazebo_msgs.srv import SetModelConfiguration
@@ -138,12 +135,6 @@ def set_model_configuration_client(node:Node, model_name, model_param_name, join
     except rException as e:
       print("Service call failed: %s" % str(e))
 
-
-
-
-
-
-
 def usage():
     """Print usage instructions for this script."""
     print('''Commands:
@@ -181,7 +172,6 @@ def usage():
     sys.exit(1)
 
 class SpawnModel(Node):
-
     def __init__(self, node_name):
         super().__init__(node_name, 
                         allow_undeclared_parameters=True, 

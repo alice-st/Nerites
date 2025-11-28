@@ -258,7 +258,7 @@ class WaypointSet(object):
         try:
             self.clear_waypoints()
             with open(filename, 'r') as wp_file:
-                wps = yaml.load(wp_file)
+                wps = yaml.load(wp_file, Loader=yaml.SafeLoader)
                 if isinstance(wps, list):
                     for wp_data in wps:
                         wp = Waypoint(

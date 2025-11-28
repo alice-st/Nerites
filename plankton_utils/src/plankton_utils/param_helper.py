@@ -3,7 +3,6 @@
 #
 import rclpy
 
-
 def __merge_dicts(a, b):
     """
     merges b into a and return merged result
@@ -32,11 +31,11 @@ def __merge_dicts(a, b):
                     else:
                         a[key] = b[key]
             else:
-                raise RuntimeError('Cannot merge non-dict "%s" into dict "%s"' % (b, a))
+                raise RuntimeError(f"Cannot merge non-dict {b} into dict {a}")
         else:
-            raise RuntimeError('NOT IMPLEMENTED "%s" into "%s"' % (b, a))
+            raise RuntimeError("NOT IMPLEMENTED {b} into {a}")
     except TypeError as e:
-        raise RuntimeError('TypeError "%s" in key "%s" when merging "%s" into "%s"' % (e, key, b, a))
+        raise RuntimeError(f"TypeError {e} in key {key} when merging {b} into {a}")
     return a
 
 
@@ -94,15 +93,28 @@ def parse_nested_params_to_dict(this_list, separator: str = ".", unpack_value: b
 def get_parameter_or_helper(node, name, default_value):
     default_param = rclpy.Parameter(
             name, rclpy.Parameter.Type.from_parameter_value(default_value), default_value)
+    
     return node.get_parameter_or(name, default_param)
 
 
 # ==============================================================================    
-# TODO Complete function
 def remove_prefix_nested_params(this_list, separator: str = "."):
     """
     From a dictionary of namespaced ROS 2 parameters, e.g.:  
-    {ns1.ns2.param1:value1, ns1.s2.param2:value2, ns3.param3:value3}, removes the 
-    first prefix for each key and returns the dictionary
+    { "ns1.ns2.param1": value1, "ns1.s2.param2": value2, "ns3.param3": value3 }
+
+    removes the first prefix for each key and returns a new dictionary.
+
+    Example:
+        input  = {"ns1.ns2.param1": 1, "ns1.s2.param2": 2, "ns3.param3": 3}
+        output = {"ns2.param1": 1, "s2.param2": 2, "param3": 3}
     """
-    return
+    new_dict = {}
+    for key, value in this_list.items():
+        # split once at the first separator
+        parts = key.split(separator, 1)
+        # keep everything after the first separator if present
+        new_key = parts[1] if len(parts) > 1 else parts[0]
+        new_dict[new_key] = value
+   
+    return new_dict

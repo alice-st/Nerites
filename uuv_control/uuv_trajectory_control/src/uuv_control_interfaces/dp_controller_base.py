@@ -112,8 +112,8 @@ class DPControllerBase(Node):
                         **kwargs)
 
         # Flag will be set to true when all parameters are initialized correctly
-        self._is_init = False
         self._logger = get_logger()
+        self._is_init = False
         
         # Reading current namespace
         self._namespace = self.get_namespace()
@@ -329,7 +329,7 @@ class DPControllerBase(Node):
         if self._vehicle_model is not None:
             del self._vehicle_model
         self._vehicle_model = Vehicle(
-            self, inertial_frame_id=self._local_planner.inertial_frame_id,tf_trans_world_ned_to_enu=world_ned_to_enu)
+            self, inertial_frame_id=self._local_planner.inertial_frame_id, tf_trans_world_ned_to_enu=world_ned_to_enu)
 
     # =========================================================================
     def _update_reference(self):

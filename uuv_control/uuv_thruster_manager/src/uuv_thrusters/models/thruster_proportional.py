@@ -47,7 +47,7 @@ class ThrusterProportional(Thruster):
 
         if 'gain' not in kwargs:
             RuntimeError('Thruster gain not given')
-        self._gain = kwargs['gain']
+        self._gain = float(kwargs['gain'])
         self.node.get_logger().info('Thruster model:')
         self.node.get_logger().info('\tGain=' + str(self._gain))
 
@@ -64,8 +64,7 @@ class ThrusterProportional(Thruster):
         
         `float`: Angular velocity set-point for the thruster in rad/s 
         """
-        return numpy.sign(thrust) * \
-            numpy.sqrt(numpy.abs(thrust) / self._gain)
+        return numpy.sign(thrust)*numpy.sqrt(numpy.abs(thrust) / self._gain)
 
     #==============================================================================
     def get_thrust_value(self, command):

@@ -53,7 +53,7 @@ class TutorialDPController(DPControllerBase):
     def __init__(self, name):
         # Calling the constructor of the super-class DPControllerBase, which has the implementation of the error
         # computation update and to publish the resulting torque control vector.
-        super(TutorialDPController, self).__init__(self, name)
+        super(TutorialDPController, self).__init__(name)
 
         # The controller should read its parameters from the ROS parameter server for initial setup
         # One way to do this is to read the parameters from the node's private parameter namespace, which is done by
@@ -84,8 +84,8 @@ class TutorialDPController(DPControllerBase):
         # For simplicity, the gain matrices are defined as diagonal matrices, so only 6 coefficients are
         # needed
         # Bug fix from original code
-        if self.has_parameter('~Kp'):
-            Kp_diag = self.get_parameter('~Kp').get_parameter_value().double_array_value
+        if self.has_parameter('Kp'):
+            Kp_diag = self.get_parameter('Kp').get_parameter_value().double_array_value
             if len(Kp_diag) == 6:
                 self._Kp = np.diag(Kp_diag)
             else:
@@ -93,20 +93,20 @@ class TutorialDPController(DPControllerBase):
                 raise RuntimeError('For the Kp diagonal matrix, 6 coefficients are needed')
 
         # Do the same for the other two matrices
-        if self.has_parameter('~Kd'):
-            diag = self.get_parameter('~Kd').get_parameter_value().double_array_value
+        if self.has_parameter('Kd'):
+            diag = self.get_parameter('Kd').get_parameter_value().double_array_value
             if len(diag) == 6:
                 self._Kd = np.diag(diag)
-                print 'Kd=\n', self._Kd
+                print('Kd=\n', self._Kd)
             else:
                 # If the vector provided has the wrong dimension, raise an exception
                 raise RuntimeError('For the Kd diagonal matrix, 6 coefficients are needed')
 
-        if self.has_parameter('~Ki'):
-            diag = self.get_parameter('~Ki').get_parameter_value().double_array_value
+        if self.has_parameter('Ki'):
+            diag = self.get_parameter('Ki').get_parameter_value().double_array_value
             if len(diag) == 6:
                 self._Ki = np.diag(diag)
-                print 'Ki=\n', self._Ki
+                print('Ki=\n', self._Ki)
             else:
                 # If the vector provided has the wrong dimension, raise an exception
                 raise RuntimeError('For the Ki diagonal matrix, 6 coefficients are needed')

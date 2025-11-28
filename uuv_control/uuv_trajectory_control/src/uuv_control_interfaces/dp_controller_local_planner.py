@@ -1,23 +1,3 @@
-# Copyright (c) 2020 The Plankton Authors.
-# All rights reserved.
-#
-# This source code is derived from UUV Simulator
-# (https://github.com/uuvsimulator/uuv_simulator)
-# Copyright (c) 2016-2019 The UUV Simulator Authors
-# licensed under the Apache license, Version 2.0
-# cf. 3rd-party-licenses.txt file in the root directory of this source tree.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 import rclpy
 import logging
 import sys
@@ -26,7 +6,6 @@ import numpy as np
 from copy import deepcopy
 from os.path import isfile
 from threading import Lock, Event
-
 from std_msgs.msg import Bool, Float64
 from geometry_msgs.msg import Twist
 from uuv_control_msgs.srv import *
@@ -126,14 +105,14 @@ class DPControllerLocalPlanner(object):
             self.node, full_dof=full_dof, stamped_pose_only=stamped_pose_only)
 
         # Max. allowed forward speed
-        self._max_forward_speed = get_parameter_or_helper(node, 'max_forward_speed', 1.0).value
+        self._max_forward_speed = float(get_parameter_or_helper(node, 'max_forward_speed', 1.0).value)
 
         self._idle_circle_center = None
         self._idle_z = None
 
         self._logger.info('Max. forward speed [m/s]=%.2f' % self._max_forward_speed)
 
-        self._idle_radius = get_parameter_or_helper(node, 'idle_radius', 10.0).value
+        self._idle_radius = float(get_parameter_or_helper(node, 'idle_radius', 10.0).value)
         assert self._idle_radius > 0
 
         self._logger.info('Idle circle radius [m] = %.2f' % self._idle_radius)
@@ -162,27 +141,6 @@ class DPControllerLocalPlanner(object):
         else:
             self._logger.info('No world ned to enu was provided. Setting to default')
             self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
-
-        # try:
-        #     import tf2_ros
-
-        #     tf_buffer = tf2_ros.Buffer()
-        #     listener = tf2_ros.TransformListener(tf_buffer, node)
-
-        #     tf_trans_ned_to_enu = tf_buffer.lookup_transform(
-        #         'world', 'world_ned', rclpy.time.Time(),
-        #         rclpy.time.Duration(seconds=10))
-            
-        #     self.q_ned_to_enu = np.array(
-        #         [tf_trans_ned_to_enu.transform.rotation.x,
-        #         tf_trans_ned_to_enu.transform.rotation.y,
-        #         tf_trans_ned_to_enu.transform.rotation.z,
-        #         tf_trans_ned_to_enu.transform.rotation.w])
-        # except Exception as ex:
-        #     self._logger.warning(
-        #         'Error while requesting ENU to NED transform'
-        #         ', message={}'.format(ex))
-        #     self.q_ned_to_enu = quaternion_from_euler(2 * np.pi, 0, np.pi)
                                 
         self.transform_ned_to_enu = quaternion_matrix(
                 self.q_ned_to_enu)[0:3, 0:3]
@@ -217,13 +175,13 @@ class DPControllerLocalPlanner(object):
         self.init_odom_event = Event()
         self.init_odom_event.clear()
 
-        self._timeout_idle_mode = get_parameter_or_helper(node, 'timeout_idle_mode', 5.0).value
+        self._timeout_idle_mode = float(get_parameter_or_helper(node, 'timeout_idle_mode', 5.0).value)
         self._start_count_idle = to_fsec(node.get_clock().now())
 
         self._thrusters_only = thrusters_only
 
         if not self._thrusters_only:
-            self._look_ahead_delay = get_parameter_or_helper(node, 'look_ahead_delay', 3.0).value
+            self._look_ahead_delay = float(get_parameter_or_helper(node, 'look_ahead_delay', 3.0).value)
         else:
             self._look_ahead_delay = 0.0
 
