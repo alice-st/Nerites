@@ -1,6 +1,10 @@
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
 #
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 # This source code is derived from UUV Simulator
 # (https://github.com/uuvsimulator/uuv_simulator)
 # Copyright (c) 2016-2019 The UUV Simulator Authors

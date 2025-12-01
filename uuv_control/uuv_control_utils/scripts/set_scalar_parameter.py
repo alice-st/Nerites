@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 import rclpy
 import sys
 import traceback

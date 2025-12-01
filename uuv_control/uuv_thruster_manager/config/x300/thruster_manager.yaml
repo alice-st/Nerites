@@ -1,4 +1,7 @@
-#rexrov/thruster_allocator:
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
+#x300/thruster_allocator:
 /**:
   ros__parameters:
     thruster_manager:

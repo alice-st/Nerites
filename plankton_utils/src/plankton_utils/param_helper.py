@@ -1,6 +1,9 @@
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
-#
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 import rclpy
 
 def __merge_dicts(a, b):

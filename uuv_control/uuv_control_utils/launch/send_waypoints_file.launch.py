@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
-"""
-NeritesMissionPlanning Gymnasium environment
 
-- Random or live waypoints via topics
-- Launches Gazebo, robot, marker publisher, AND waypoint publisher launch file
-- Listens to waypoints (Trajectory/Path/PoseArray)
-- Cross-track error utility to the polyline
-"""
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
 
 from __future__ import annotations
 

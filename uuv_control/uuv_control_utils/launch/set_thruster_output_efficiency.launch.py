@@ -3,6 +3,9 @@ from launch.actions import DeclareLaunchArgument, OpaqueFunction, GroupAction
 from launch_ros.actions import Node, PushRosNamespace
 from launch.substitutions import LaunchConfiguration
 
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 """
 ROS2 launch file for dynamically setting a thruster’s output efficiency
 =======================================================================

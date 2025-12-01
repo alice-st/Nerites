@@ -1,3 +1,6 @@
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration

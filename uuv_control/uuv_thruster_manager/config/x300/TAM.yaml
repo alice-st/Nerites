@@ -1,3 +1,6 @@
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 /**:
   ros__parameters:
     tam: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0,

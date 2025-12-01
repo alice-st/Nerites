@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 """
 ROS 2 Launch File – Set Scalar Hydrodynamic Parameters for UUV Simulator (with OpaqueFunction)
 

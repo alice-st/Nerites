@@ -1,6 +1,10 @@
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
 #
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 # This source code is derived from UUV Simulator
 # (https://github.com/uuvsimulator/uuv_simulator)
 # Copyright (c) 2016-2019 The UUV Simulator Authors
@@ -18,6 +22,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import numpy as np
 import os
 import yaml
@@ -28,7 +33,6 @@ from rclpy.node import Node
 import tf2_py as tf2
 import tf2_ros
 
-#from tf2_py import LookupException
 from tf_quaternion.transformations import quaternion_matrix
 from uuv_thrusters.models import Thruster
 from uuv_auv_control_allocator.msg import AUVCommand

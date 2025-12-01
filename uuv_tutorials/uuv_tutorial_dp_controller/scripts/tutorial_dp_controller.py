@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
 #
@@ -20,13 +24,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Import the ROS Python library
 import rclpy
-# Import the NumPy package for numerical computations
 import numpy as np
-# Import the dynamic positioning controller base class to inherit methods such as error computation update,
-# publishing from some important ROS topics (e.g. trajectory, pose and velocity reference) and access to
-# the vehicle model class, that is necessary to explicitly use the vehicle model
 from uuv_control_interfaces import DPControllerBase
 
 

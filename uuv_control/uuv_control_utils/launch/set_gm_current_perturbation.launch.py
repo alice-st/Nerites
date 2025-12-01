@@ -1,3 +1,6 @@
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 """
 This script configures the water current model in the UUV Simulator via ROS 2 services.
 
@@ -14,7 +17,6 @@ Typical usage:
     ros2 launch uuv_control_utils set_gm_current_perturbation.launch.py uuv_name:=rexrov component:=horz_angle
 
 """
-
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument

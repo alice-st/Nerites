@@ -1,3 +1,6 @@
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
 #
@@ -18,6 +21,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import numpy as np
 import rclpy
 from uuv_control_msgs.srv import *
