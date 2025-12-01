@@ -32,7 +32,7 @@ from geometry_msgs.msg import Wrench, Vector3
 from utils.transform import get_world_ned_to_enu
 from uuv_control_interfaces import DPPIDControllerBase
 from tf_quaternion.transformations import quaternion_matrix
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class ROV_NLPIDController(DPPIDControllerBase):

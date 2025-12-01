@@ -25,8 +25,7 @@ import threading
 import traceback
 
 from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterEfficiency
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec, is_sim_time
 
 def build_service_name(ns, thruster_id, service_name) -> str :
     return '/%s/thrusters/id_%d/%s' % (ns, thruster_id, service_name)

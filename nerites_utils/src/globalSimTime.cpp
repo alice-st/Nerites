@@ -7,7 +7,7 @@
 int main(int argc, char** argv) {
     rclcpp::init(argc, argv);
     
-    auto node = rclcpp::Node::make_shared("plankton_global_sim_time");
+    auto node = rclcpp::Node::make_shared("nerites_global_sim_time");
 
     rclcpp::spin(node);
     rclcpp::shutdown();

@@ -38,7 +38,7 @@ from uuv_thrusters.models import Thruster
 from uuv_auv_control_allocator.msg import AUVCommand
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from .fin_model import FinModel
-from plankton_utils.param_helper import parse_nested_params_to_dict
+from nerites_utils.param_helper import parse_nested_params_to_dict
 
 #TODO Refactor
 class ActuatorManager(Node):

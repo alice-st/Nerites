@@ -27,7 +27,7 @@ from nav_msgs.msg import Path
 from .wp_trajectory_generator import WPTrajectoryGenerator
 from .trajectory_point import TrajectoryPoint
 from ._log import get_logger
-from plankton_utils.time import float_sec_to_int_sec_nano
+from nerites_utils.time import float_sec_to_int_sec_nano
 from tf_quaternion.transformations import euler_from_quaternion
 import uuv_control_msgs.msg as uuv_control_msgs
 from uuv_waypoints import WaypointSet

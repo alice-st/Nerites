@@ -35,8 +35,7 @@ from rclpy.qos import QoSDurabilityPolicy
 from rclpy.qos import QoSProfile
 
 from .models import Thruster
-from plankton_utils.param_helper import parse_nested_params_to_dict
-from plankton_utils.param_helper import get_parameter_or_helper
+from nerites_utils.param_helper import parse_nested_params_to_dict, get_parameter_or_helper
 from tf_quaternion import transformations
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 

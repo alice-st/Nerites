@@ -25,7 +25,7 @@ import traceback
 
 from utils.transform import get_world_ned_to_enu
 from uuv_control_interfaces import DPPIDControllerBase
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class ROV_PIDController(DPPIDControllerBase):

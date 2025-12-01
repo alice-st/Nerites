@@ -37,10 +37,7 @@ from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterState, SetThrusterEfficie
 from geometry_msgs.msg import Point, WrenchStamped, Vector3
 from rclpy.node import Node
 
-from plankton_utils.param_helper import parse_nested_params_to_dict
-from plankton_utils.time import time_in_float_sec, float_sec_to_int_sec_nano
-from plankton_utils.time import is_sim_time
-
+from nerites_utils.param_helper import parse_nested_params_to_dict, time_in_float_sec, float_sec_to_int_sec_nano, is_sim_time
 
 class DisturbanceManager(Node):
 

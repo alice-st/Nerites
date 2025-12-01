@@ -29,7 +29,7 @@ from std_msgs.msg import Bool
 from geometry_msgs.msg import Twist, Accel, Vector3
 from rclpy.node import Node
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 class KeyBoardVehicleTeleop(Node):
     def __init__(self, name, **kwargs):

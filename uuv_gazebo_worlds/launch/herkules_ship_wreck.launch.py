@@ -51,11 +51,11 @@ def launch_setup(context, *args, **kwargs):
     )
 
     actions = [
-        # Node: plankton_global_sim_time
+        # Node: nerites_global_sim_time
         Node(
-            package='plankton_utils',
-            executable='plankton_global_sim_time',
-            name='plankton_global_sim_time',
+            package='nerites_utils',
+            executable='nerites_global_sim_time',
+            name='nerites_global_sim_time',
             output='screen',
             parameters=[{'use_sim_time': use_sim_time}]
         ),

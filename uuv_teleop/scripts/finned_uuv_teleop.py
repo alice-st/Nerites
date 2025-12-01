@@ -27,8 +27,8 @@ from sensor_msgs.msg import Joy
 from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from uuv_thrusters.models import Thruster
 
-from plankton_utils.param_helper import parse_nested_params_to_dict
-from plankton_utils.time import is_sim_time
+from nerites_utils.param_helper import parse_nested_params_to_dict
+from nerites_utils.time import is_sim_time
 
 
 class FinnedUUVControllerNode(Node):

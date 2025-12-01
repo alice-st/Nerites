@@ -5,7 +5,7 @@ import unittest
 
 from rclpy.time import Time
 
-from plankton_utils.time import time_in_float_sec
+from nerites_utils.time import time_in_float_sec
 
 
 class TestClient(unittest.TestCase):

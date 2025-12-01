@@ -39,7 +39,7 @@ import uuv_waypoints
 import rclpy
 from rclpy.node import Node
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 class TrajectoryMarkerPublisher(Node):
     def __init__(self, name, **kwargs):

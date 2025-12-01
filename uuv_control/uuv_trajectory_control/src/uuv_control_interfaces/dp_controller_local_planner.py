@@ -26,9 +26,8 @@ from ._log import get_logger
 
 from rclpy.node import Node
 
-from plankton_utils.param_helper import get_parameter_or_helper
-from plankton_utils.time import time_in_float_sec as to_fsec
-from plankton_utils.time import float_sec_to_int_sec_nano
+from nerites_utils.param_helper import get_parameter_or_helper
+from nerites_utils.time import time_in_float_sec as to_fsec, float_sec_to_int_sec_nano
 
 
 class DPControllerLocalPlanner(object):

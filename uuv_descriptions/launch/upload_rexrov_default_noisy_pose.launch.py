@@ -12,7 +12,7 @@ import os
 import pathlib
 import xacro
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 def to_bool(value: str):
     if isinstance(value, bool):

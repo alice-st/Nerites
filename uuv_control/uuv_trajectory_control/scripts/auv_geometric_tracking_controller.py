@@ -43,8 +43,8 @@ from uuv_gazebo_ros_plugins_msgs.msg import FloatStamped
 from uuv_control_msgs.msg import TrajectoryPoint
 from uuv_control_interfaces import DPControllerLocalPlanner
 from tf_quaternion.transformations import quaternion_multiply, quaternion_inverse, euler_from_quaternion
-from plankton_utils.param_helper import parse_nested_params_to_dict, get_parameter_or_helper
-from plankton_utils.time import is_sim_time, time_in_float_sec
+from nerites_utils.param_helper import parse_nested_params_to_dict, get_parameter_or_helper
+from nerites_utils.time import is_sim_time, time_in_float_sec
 
 from utils.transform import get_world_ned_to_enu
 

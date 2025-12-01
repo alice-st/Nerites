@@ -1,17 +1,16 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>plankton_utils</name>
+  <name>nerites_utils</name>
   
     <version>0.6.1</version>
     <description>A collection of functions to help interacting with ROS 2 API</description>
 
-    <author email="jean-philip-a.royer@naval-group.com">Jean-Philip Royer</author>
-    <author email="loic.mougeolle@naval-group.com">Loïc Mougeolle</author>
+    <author email="aliki.stefano@gmail.com">Aliki Stefanopoulou</author>
+    <author email="kapsacheilisdimitris@gmail.com">Dimitris Kapsacheilis</author>
 
-    <maintainer email="jean-philip-a.royer@naval-group.com">Jean-Philip Royer</maintainer>
-    <maintainer email="loic.mougeolle@naval-group.com">Loïc Mougeolle</maintainer>
-
+    <maintainer email="aliki.stefano@gmail.com">Aliki Stefanopoulou</maintainer>
+    <maintainer email="kapsacheilisdimitris@gmail.com">Dimitris Kapsacheilis</maintainer>
 
     <license>Apache-2.0</license>
 

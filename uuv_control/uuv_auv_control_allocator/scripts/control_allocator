@@ -36,12 +36,12 @@ from uuv_auv_actuator_interface import FinModel
 import uuv_auv_actuator_interface
 import sys
 
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec
+from nerites_utils.time import is_sim_time
 import tf2_ros
 import threading
 import traceback
-from plankton_utils.param_helper import parse_nested_params_to_dict, \
+from nerites_utils.param_helper import parse_nested_params_to_dict, \
                                         get_parameter_or_helper
 from utils.transform import get_world_ned_to_enu
 from uuv_thrusters.models import Thruster

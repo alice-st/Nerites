@@ -13,7 +13,7 @@ from geometry_msgs.msg import PolygonStamped, Point32
 from gazebo_msgs.srv import GetWorldProperties, GetModelProperties
 from tf_quaternion.transformations import euler_from_quaternion
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class FootprintsPublisher(Node):

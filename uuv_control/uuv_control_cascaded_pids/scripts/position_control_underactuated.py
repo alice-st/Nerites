@@ -22,8 +22,6 @@
 
 import numpy
 import rclpy
-# import tf
-# import tf.transformations as trans
 from PIDRegulator import PIDRegulator
 
 from dynamic_reconfigure.server import Server

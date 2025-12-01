@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<package format="3">
+    <name>nerites</name>
+    <version>0.6.1</version>
+    <description>Open source simulator for maritime robotics research</description>
+
+    <author email="aliki.stefano@gmail.com">Aliki Stefanopoulou</author>
+    <author email="kapsacheilisdimitris@gmail.com">Dimitris Kapsacheilis</author>
+
+    <maintainer email="aliki.stefano@gmail.com">Aliki Stefanopoulou</maintainer>
+    <maintainer email="kapsacheilisdimitris@gmail.com">Dimitris Kapsacheilis</maintainer>
+
+    <license>Apache-2.0</license>
+
+    <url type="documentation">https://github.com/alice-st/Nerites/</url>
+
+    <buildtool_depend>ament_cmake</buildtool_depend>
+
+    <exec_depend>nerites_utils</exec_depend>
+    <exec_depend>uuv_simulator</exec_depend>
+
+    <export>
+        <build_type>ament_cmake</build_type>
+    </export>
+</package>

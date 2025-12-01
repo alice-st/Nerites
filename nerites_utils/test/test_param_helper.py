@@ -6,7 +6,7 @@ import unittest
 
 from rclpy.time import Time
 
-from plankton_utils.param_helper import *
+from nerites_utils.param_helper import *
 
 
 class TestClient(unittest.TestCase):

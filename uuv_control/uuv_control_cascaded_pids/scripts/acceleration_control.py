@@ -26,7 +26,7 @@ from geometry_msgs.msg import Accel
 from geometry_msgs.msg import Wrench
 from rclpy.node import Node
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class AccelerationControllerNode(Node):

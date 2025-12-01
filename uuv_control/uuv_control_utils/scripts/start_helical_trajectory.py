@@ -31,9 +31,7 @@ from uuv_control_msgs.srv import InitHelicalTrajectory
 from numpy import pi
 from geometry_msgs.msg import Point
 
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import float_sec_to_int_sec_nano
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec, float_sec_to_int_sec_nano, is_sim_time
 
 def main(): 
     rclpy.init()

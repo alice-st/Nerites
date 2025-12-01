@@ -26,8 +26,7 @@ import rclpy
 import sys
 from numpy import pi
 from uuv_world_ros_plugins_msgs.srv import *
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec, is_sim_time
 
 
 def main():

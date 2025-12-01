@@ -29,8 +29,7 @@ import rclpy.clock
 import time
 import threading
 
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec, is_sim_time
 
 #==============================================================================
 def main():

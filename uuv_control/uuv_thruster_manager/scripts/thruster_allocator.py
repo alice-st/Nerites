@@ -29,9 +29,7 @@ import yaml
 from uuv_thrusters import ThrusterManager
 from geometry_msgs.msg import Wrench, WrenchStamped
 from uuv_thruster_manager.srv import *
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
-
+from nerites_utils.time import time_in_float_sec, is_sim_time
 
 class ThrusterAllocatorNode(ThrusterManager):
     """The thruster allocator node allows a client node 

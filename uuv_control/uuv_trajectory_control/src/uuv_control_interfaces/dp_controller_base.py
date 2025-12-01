@@ -41,8 +41,8 @@ from tf_quaternion.transformations import euler_from_quaternion, \
 from uuv_control_msgs.msg import Trajectory, TrajectoryPoint
 from uuv_control_msgs.srv import *
 from uuv_auv_control_allocator.msg import AUVCommand
-from plankton_utils.param_helper import get_parameter_or_helper
-from plankton_utils.time import time_in_float_sec
+from nerites_utils.param_helper import get_parameter_or_helper
+from nerites_utils.time import time_in_float_sec
 
 from .dp_controller_local_planner import DPControllerLocalPlanner as LocalPlanner
 from ._log import get_logger

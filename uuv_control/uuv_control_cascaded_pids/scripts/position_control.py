@@ -37,8 +37,8 @@ from rcl_interfaces.msg import SetParametersResult
 from rclpy.parameter import Parameter
 from rclpy.node import Node
 
-from plankton_utils.time import time_in_float_sec_from_msg
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec_from_msg
+from nerites_utils.time import is_sim_time
 
 class PositionControllerNode(Node):
     def __init__(self, name, **kwargs):

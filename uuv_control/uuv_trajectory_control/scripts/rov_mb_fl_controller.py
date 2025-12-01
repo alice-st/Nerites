@@ -28,8 +28,7 @@ from utils.transform import get_world_ned_to_enu
 from uuv_control_interfaces import DPPIDControllerBase
 from uuv_control_msgs.srv import *
 
-from plankton_utils.time import time_in_float_sec
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import time_in_float_sec, is_sim_time
 
 class ROV_MBFLController(DPPIDControllerBase):
     """

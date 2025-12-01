@@ -30,9 +30,7 @@ from nav_msgs.msg import Odometry
 # Modules included in this package
 from uuv_PID import PIDRegulator
 import tf_quaternion.transformations as transf
-from plankton_utils.time import time_in_float_sec_from_msg
-from plankton_utils.time import is_sim_time
-
+from nerites_utils.time import time_in_float_sec_from_msg, is_sim_time
 
 class VelocityControllerNode(Node):
     def __init__(self, name, **kwargs):

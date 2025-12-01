@@ -52,7 +52,7 @@ def __is_sim_time_subprocess(timeout_sec= 5, default_value=False, return_param=T
     boolean
     :param default_value: default value to return
 
-    :return A boolean or a parameter, both indicating if Plankton is using
+    :return A boolean or a parameter, both indicating if Nerites is using
     sim time
     """
     res = default_value
@@ -65,7 +65,7 @@ def __is_sim_time_subprocess(timeout_sec= 5, default_value=False, return_param=T
             from subprocess import TimeoutExpired
 
             output = subprocess.check_output(
-                ['ros2 param get /plankton_global_sim_time use_sim_time'], 
+                ['ros2 param get /nerites_global_sim_time use_sim_time'], 
                 timeout=max(timeout_sec - (time.time() - starting_time), 0),
                 shell=True
             )
@@ -113,7 +113,7 @@ def __is_sim_time_node(timeout_sec=10, return_param=True, default_value=False):
     boolean
     :param default_value: default value to return
 
-    :return A boolean or a parameter, both indicating if Plankton is using
+    :return A boolean or a parameter, both indicating if Nerites is using
     sim time
     """
     try:
@@ -145,7 +145,7 @@ def __is_sim_time_node(timeout_sec=10, return_param=True, default_value=False):
 
         start_time = time.time()
 
-        sim_time_srv = node.create_client(GetParameters, '/plankton_global_sim_time/get_parameters')
+        sim_time_srv = node.create_client(GetParameters, '/nerites_global_sim_time/get_parameters')
         if not sim_time_srv.wait_for_service(timeout_sec=timeout_sec):
             node.get_logger().info('service %s not available' % sim_time_srv.srv_name)
             return get_value(default_value)
@@ -196,7 +196,7 @@ def is_sim_time(
     :param use_subprocess: True to run a command with ros2 param arguments,
     False to create a node and use a service
 
-    :return A boolean or a parameter, both indicating if Plankton is using
+    :return A boolean or a parameter, both indicating if Nerites is using
     sim time
     """
     if use_subprocess:

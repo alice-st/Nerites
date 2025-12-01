@@ -15,7 +15,7 @@ from rclpy.node import Node
 from std_srvs.srv import Empty
 import time
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class UnpauseSimulation(Node):

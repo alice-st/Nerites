@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(plankton)
+project(nerites)
 
 find_package(ament_cmake REQUIRED)
 

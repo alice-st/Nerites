@@ -13,7 +13,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PolygonStamped, Point32
 from visualization_msgs.msg import Marker
 
-from plankton_utils.time import is_sim_time
+from nerites_utils.time import is_sim_time
 
 
 class VehicleFootprint(Node):

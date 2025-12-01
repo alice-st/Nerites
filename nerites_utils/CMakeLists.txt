@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(plankton_utils)
+project(nerites_utils)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -20,21 +20,21 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_pytest REQUIRED)
 find_package(rclcpp REQUIRED)
 
-add_executable(plankton_global_sim_time src/globalSimTime.cpp)
+add_executable(nerites_global_sim_time src/globalSimTime.cpp)
 
 ament_target_dependencies(
-  plankton_global_sim_time
+  nerites_global_sim_time
   ament_cmake 
   rclcpp
 )
 
 # Needs to be installed in lib and not bin folder in order to be found by ament
-install(TARGETS plankton_global_sim_time 
+install(TARGETS nerites_global_sim_time 
   DESTINATION lib/${PROJECT_NAME}
 )
 
 
-ament_python_install_package(plankton_utils PACKAGE_DIR src/plankton_utils)
+ament_python_install_package(nerites_utils PACKAGE_DIR src/nerites_utils)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -46,12 +46,12 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   #ament_lint_auto_find_test_dependencies()
 
-  set(plankton_utils_python_tests
+  set(nerites_utils_python_tests
       test/test_time.py
       test/test_param_helper.py
   )
 
-  foreach(_test_path ${plankton_utils_python_tests})
+  foreach(_test_path ${nerites_utils_python_tests})
     #ament_add_pytest_test(${PROJECT_NAME}_pytests ${_test_path}) #change for uniqueness
       get_filename_component(_test_name ${_test_path} NAME_WE)
       ament_add_pytest_test(${_test_name} ${_test_path}
