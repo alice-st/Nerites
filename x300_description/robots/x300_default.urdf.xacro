@@ -1,0 +1,202 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="$(arg robot_name)">
+  <xacro:arg name="robot_name" default=""/> 
+  <xacro:arg name="debug" default="0"/>
+  <xacro:arg name="ns" default=""/>
+  <!-- <xacro:arg name="inertial_reference_frame" default="world"/> -->
+  <!-- Properties -->
+  <xacro:property name="namespace" value="$(arg ns)" />
+  <xacro:property name="inertial_reference_frame" value="world"/>
+  <xacro:property name="mass" value="30.0" />
+  <xacro:property name="buoyancy" value="-294.3" />
+  <xacro:property name="center_of_gravity" value="0.0 0.0 0.0" />
+  <xacro:property name="inertia_tensor" value="0.163594 12.425007 12.425007" />
+  <xacro:property name="gravity_vector" value="0.0 0.0 -9.81" />
+  <xacro:property name="center_of_buoyancy" value="0.0 0.0 0.06" />
+  <xacro:property name="added_mass" value="2.270 22.700 22.700 0.364 0.364 0.364" />
+  <xacro:property name="damping_coefficients_linear" value="1.079 175.0 175.0 0.0 100.0 50.0" />
+  <xacro:property name="damping_coefficients_quadratic" value="10.794 1750.0 1750.0 0.0 100.0 50.0" />
+  <xacro:property name="thruster_positions" value="-1.0 0.0 0.0 -0.5 0.0 0.0 -0.25 0.0 0.0 0.25 0.0 0.0 0.5 0.0 0.0" />
+  <xacro:property name="thruster_orientations_degrees" value="0.0 -180.0 0.0 0.0 90.0 0.0 0.0 0.0 90.0 0.0 0.0 90.0 0.0 90.0 0.0" />
+  <xacro:property name="thruster_upper_limits" value="50.0 50.0 50.0 50.0 50.0" />
+  <xacro:property name="thruster_lower_limits" value="-50.0 -50.0 -50.0 -50.0 -50.0" />
+  <xacro:property name="visual_mesh_file" value="file://$(find x300_description)/models/x300/meshes/twin_no_thrusters.dae" />
+  <xacro:property name="back_thruster" value="file://$(find x300_description)/models/x300/meshes/x300_back_thruster.dae" />
+  <xacro:property name="front_thruster_vertical" value="file://$(find x300_description)/models/x300/meshes/x300_front_thruster.dae" />
+  <xacro:property name="front_thruster_horizontal" value="file://$(find x300_description)/models/x300/meshes/x300_front_thruster_horizontal.dae" />
+
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro" />
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro" />
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  
+  <!-- Base Link -->
+  <link name="${namespace}/base_link">
+    <inertial>
+      <origin xyz="${center_of_gravity}" rpy="0 0 0" />
+      <mass value="${mass}" />
+      <inertia 
+        ixx="0.163594" 
+        ixy="0.0" 
+        ixz="0.0" 
+        iyy="12.425007" 
+        iyz="0.0" 
+        izz="12.425007" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="-1.57 0 0" />
+      <geometry>
+        <mesh filename="${visual_mesh_file}" scale="1 1 1" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="${visual_mesh_file}" scale="1 1 1" />
+      </geometry>
+    </collision>
+  </link>
+
+   <xacro:default_pose_3d_macro
+      namespace="${namespace}"
+      parent_link="${namespace}/base_link"
+      inertial_reference_frame="${inertial_reference_frame}" />
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="0"
+    mesh_filename="${back_thruster}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-1.15 0.25 0" rpy="0 0 0"/> <!-- +X -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="5"
+    mesh_filename="${back_thruster}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-1.15 -0.25 0" rpy="0 0 0"/> <!-- +X -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <!-- HEAVE (front/back vertical) – push +Z -->
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="1"
+    mesh_filename="${front_thruster_vertical}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-0.98  0.25 0" rpy="0 -1.57079632679 0"/> <!-- +Z -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="6"
+    mesh_filename="${front_thruster_vertical}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-0.98 -0.25 0" rpy="0 -1.57079632679 0"/> <!-- +Z -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="4"
+    mesh_filename="${front_thruster_vertical}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="0.91  0.25 0" rpy="0 -1.57079632679 0"/> <!-- +Z -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="9"
+    mesh_filename="${front_thruster_vertical}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="0.91 -0.25 0" rpy="0 -1.57079632679 0"/> <!-- +Z -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+
+  <!-- SWAY (horizontal quads) – port +Y, starboard −Y -->
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="2"
+    mesh_filename="${front_thruster_horizontal}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-0.88  0.25 0" rpy="0 0 -1.57079632679"/>  <!-- +Y -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="7"
+    mesh_filename="${front_thruster_horizontal}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="-0.88 -0.25 0" rpy="0 0 -1.57079632679"/> <!-- +Y -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="3"
+    mesh_filename="${front_thruster_horizontal}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="0.81  0.25 0" rpy="0 0  -1.57079632679"/>  <!-- +Y -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <xacro:thruster_module_first_order_basic_fcn_macro_x300
+    namespace="${namespace}" thruster_id="8"
+    mesh_filename="${front_thruster_horizontal}"
+    dyn_time_constant="0.1" rotor_constant="0.000049"
+    spin_axis="1 0 0">
+    <origin xyz="0.81 -0.25 0" rpy="0 0  -1.57079632679"/> <!-- +Y -->
+  </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+
+  <!-- Default joint state publisher -->
+  <xacro:macro name="default_joint_state_publisher" params="namespace update_rate">
+    <gazebo>
+      <plugin name="uuv_joint_state_publisher" filename="libuuv_joint_state_publisher.so">
+        <ros>
+          <namespace>${namespace}</namespace>
+        </ros>
+        <robotNamespace>${namespace}</robotNamespace>
+        <updateRate>${update_rate}</updateRate>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+  <xacro:default_joint_state_publisher namespace="${namespace}" update_rate="50" />
+<gazebo>
+    <plugin name="${namespace}_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
+        <fluid_density>1027.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <link name="${namespace}/base_link">
+            <volume>0.136</volume>
+            <center_of_buoyancy>0 0 0.06</center_of_buoyancy>
+            <neutrally_buoyant>1</neutrally_buoyant>
+            <hydrodynamic_model>
+              <type>fossen</type>
+                <added_mass>
+                    4.313   0       0       0       0       0
+                    0       39.725  0       0       0       0
+                    0       0       39.725  0       0       0
+                    0       0       0       0.637   0       0
+                    0       0       0       0       0.637   0
+                    0       0       0       0       0       0.637
+                </added_mass>
+                <linear_damping_forward_speed>
+                    -2.05    0       0       0       0       0
+                    0       -306.25  0       0       0       175.0
+                    0       0       -306.25  0       -175.0  0
+                    0       0       0       -87.5    0       0
+                    0       0       175.0    0       -87.5   0
+                    0       -87.5    0       0       0       -87.5
+                </linear_damping_forward_speed>
+                <quadratic_damping>
+                    -20.51   0       0       0       0       0
+                    0       -3062.5  0       0       0       175.0
+                    0       0       -3062.5  0       -175.0  0
+                    0       0       0       -875.0   0       0
+                    0       0       1750.0   0       -875.0  0
+                    0       -875.0   0       0       0       -875.0
+                </quadratic_damping>
+            </hydrodynamic_model>
+        </link>
+    </plugin>
+</gazebo>
+
+
+
+</robot>

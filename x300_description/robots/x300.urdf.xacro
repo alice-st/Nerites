@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!-- X300 main xacro entry point
+     Modeled after RexROV, adapted for the X300 vehicle. -->
+
+<robot name="x300" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+  <!-- Arguments -->
+  <xacro:arg name="debug" default="0"/>
+  <xacro:arg name="namespace" default="x300"/>
+  <xacro:arg name="inertial_reference_frame" default="world"/>
+
+  <!-- === Includes for vehicle definition === -->
+  <xacro:include filename="$(find x300_description)/robots/x300_base.xacro"/>
+  <xacro:include filename="$(find x300_description)/robots/x300.gazebo.xacro"/>
+
+  <!-- === Create the X300 ROV === -->
+  <xacro:x300_base
+    namespace="$(arg namespace)"
+    inertial_reference_frame="$(arg inertial_reference_frame)">
+    
+    <!-- Hydrodynamics plugin block -->
+    <gazebo>
+      <plugin name="$(arg namespace)_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
+        <fluid_density>1027.0</fluid_density>
+        <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
+        <debug>$(arg debug)</debug>
+
+        <!-- Include hydrodynamic model for X300 -->
+        <xacro:x300_hydro_model namespace="$(arg namespace)"/>
+      </plugin>
+    </gazebo>
+
+  </xacro:x300_base>
+
+  <!-- === Joint State Publisher === -->
+  <xacro:default_joint_state_publisher namespace="$(arg namespace)" update_rate="50"/>
+
+</robot>

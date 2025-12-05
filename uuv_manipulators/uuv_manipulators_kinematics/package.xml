@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>uuv_manipulators_kinematics</name>
+  <version>0.6.1</version>
+  <description>
+    Implementation of interfaces to operate manipulators and grippers along with
+    kinematics solver services. (ROS 2)
+  </description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <!-- Build tool -->
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Gazebo / control / kinematics stack (adjust to your actual ROS 2 packages) -->
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>control_toolbox</exec_depend>
+  <exec_depend>orocos_kdl</exec_depend>
+
+  <!-- ROS 2 Python client -->
+  <exec_depend>rclpy</exec_depend>
+
+  <!-- Python libs -->
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-lxml</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <!-- UUV / messages -->
+  <exec_depend>uuv_manipulators_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <!-- TF / URDF / KDL parser (ROS 2 equivalents) -->
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>urdfdom_py</exec_depend>
+  <exec_depend>kdl_parser</exec_depend>
+
+  <!-- Test deps (if you port tests to ROS 2) -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+
+</package>

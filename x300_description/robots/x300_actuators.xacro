@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<!-- Thrusters for X300 -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- === Thruster Mesh Paths === -->
+  <xacro:property name="back_thruster" value="file://$(find x300_description)/models/x300/meshes/x300_back_thruster.dae"/>
+  <xacro:property name="front_thruster" value="file://$(find x300_description)/models/x300/meshes/x300_front_thruster.dae"/>
+  <xacro:property name="front_thruster_horizontal" value="file://$(find x300_description)/models/x300/meshes/x300_front_thruster_horizontal.dae"/>
+  <xacro:property name="front_thruster_vertical" value="file://$(find x300_description)/models/x300/meshes/x300_front_thruster.dae" />
+
+
+  <!-- === Thruster Macro ===
+       Uses the UUV thruster module snippet (applies force via plugin)
+  -->
+  <xacro:macro name="x300_thruster"
+      params="namespace thruster_id mesh_filename thrust_axis *origin">
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+        namespace="${namespace}"
+        thruster_id="${thruster_id}"
+        mesh_filename="${mesh_filename}"
+        dyn_time_constant="0.1"
+        rotor_constant="0.000049"
+        thrust_axis="${thrust_axis}">
+      <xacro:insert_block name="origin"/>
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+  </xacro:macro>
+
+  <!-- === Thruster Instances (5 thrusters) === -->
+
+  <!-- Thruster 0: Rear Left (Surge) -->
+<!--   <xacro:x300_thruster namespace="${namespace}" thruster_id="0"
+      mesh_filename="${back_thruster_mesh}" thrust_axis="1 0 0">
+    <origin xyz="-1.0 0.25 0.0" rpy="0 0 0"/>
+  </xacro:x300_thruster>
+ -->
+  <!-- Thruster 1: Rear Right (Surge) -->
+ <!--  <xacro:x300_thruster namespace="${namespace}" thruster_id="1"
+      mesh_filename="${back_thruster_mesh}" thrust_axis="1 0 0">
+    <origin xyz="-1.0 -0.25 0.0" rpy="0 0 0"/>
+  </xacro:x300_thruster> -->
+
+  <!-- Thruster 2: Center Vertical (Heave) -->
+<!--   <xacro:x300_thruster namespace="${namespace}" thruster_id="2"
+      mesh_filename="${front_thruster_mesh}" thrust_axis="0 0 1">
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </xacro:x300_thruster> -->
+
+  <!-- Thruster 3: Port Side (Sway) -->
+<!--   <xacro:x300_thruster namespace="${namespace}" thruster_id="3"
+      mesh_filename="${front_thruster_horizontal_mesh}" thrust_axis="0 1 0">
+    <origin xyz="0.0 0.25 0.0" rpy="0 0 0"/>
+  </xacro:x300_thruster> -->
+
+  <!-- Thruster 4: Starboard Side (Sway) -->
+ <!--  <xacro:x300_thruster namespace="${namespace}" thruster_id="4"
+      mesh_filename="${front_thruster_horizontal_mesh}" thrust_axis="0 1 0">
+    <origin xyz="0.0 -0.25 0.0" rpy="0 0 0"/>
+  </xacro:x300_thruster> -->
+
+  <!-- === Thruster Instances (5 thrusters, NO meshes) === -->
+
+  <!-- Thruster 0: Rear Left (Surge) -->
+ <!--  <link name="${namespace}/thruster_0">
+    <visual><geometry><cylinder radius="0.02" length="0.1"/></geometry></visual>
+    <collision><geometry><cylinder radius="0.02" length="0.1"/></geometry></collision>
+  </link>
+  <joint name="${namespace}/thruster_0_joint" type="fixed">
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/thruster_0"/>
+    <origin xyz="-1.0 0.25 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${namespace}/thruster_1">
+    <visual><geometry><cylinder radius="0.02" length="0.1"/></geometry></visual>
+    <collision><geometry><cylinder radius="0.02" length="0.1"/></geometry></collision>
+  </link>
+  <joint name="${namespace}/thruster_1_joint" type="fixed">
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/thruster_1"/>
+    <origin xyz="-1.0 -0.25 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${namespace}/thruster_2">
+    <visual><geometry><cylinder radius="0.02" length="0.1"/></geometry></visual>
+    <collision><geometry><cylinder radius="0.02" length="0.1"/></geometry></collision>
+  </link>
+  <joint name="${namespace}/thruster_2_joint" type="fixed">
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/thruster_2"/>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${namespace}/thruster_3">
+    <visual><geometry><cylinder radius="0.02" length="0.1"/></geometry></visual>
+    <collision><geometry><cylinder radius="0.02" length="0.1"/></geometry></collision>
+  </link>
+  <joint name="${namespace}/thruster_3_joint" type="fixed">
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/thruster_3"/>
+    <origin xyz="0.0 0.25 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <link name="${namespace}/thruster_4">
+    <visual><geometry><cylinder radius="0.02" length="0.1"/></geometry></visual>
+    <collision><geometry><cylinder radius="0.02" length="0.1"/></geometry></collision>
+  </link>
+  <joint name="${namespace}/thruster_4_joint" type="fixed">
+    <parent link="${namespace}/base_link"/>
+    <child link="${namespace}/thruster_4"/>
+    <origin xyz="0.0 -0.25 0.0" rpy="0 0 0"/>
+  </joint>
+ -->
+
+   <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="0"
+      mesh_filename="${back_thruster}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="1 0 0">
+      <origin xyz="-1.15 0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="5"
+      mesh_filename="${back_thruster}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="1 0 0">
+      <origin xyz="-1.15 -0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+   <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="1"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      mesh_filename="${front_thruster_vertical}"
+      thrust_axis="0 0 1">
+      <origin xyz="-0.98 0.25 0" rpy="0 0 0" />
+      <!-- <dynamics/>
+      <conversion/> -->
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="6"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      mesh_filename="${front_thruster_vertical}"
+      thrust_axis="0 0 1">
+      <origin xyz="-0.98 -0.25 0" rpy="0 0 0" />
+      <!-- <dynamics/>
+      <conversion/> -->
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="2"
+      mesh_filename="${front_thruster_horizontal}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 1 0">
+      <origin xyz="-0.88 0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+     <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="7"
+      mesh_filename="${front_thruster_horizontal}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 1 0">
+      <origin xyz="-0.88 -0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="3"
+      mesh_filename="${front_thruster_horizontal}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 1 0">
+      <origin xyz="0.81 0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+     <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="8"
+      mesh_filename="${front_thruster_horizontal}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 1 0">
+      <origin xyz="0.81 -0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="4"
+      mesh_filename="${front_thruster_vertical}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 0 1">
+      <origin xyz="0.91 0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+     <xacro:thruster_module_first_order_basic_fcn_macro_x300
+      namespace="${namespace}"
+      thruster_id="9"
+      mesh_filename="${front_thruster_vertical}"
+      dyn_time_constant="0.1"
+      rotor_constant="0.000049"
+      thrust_axis="0 0 1">
+      <origin xyz="0.91 -0.25 0" rpy="0 0 0" />
+    </xacro:thruster_module_first_order_basic_fcn_macro_x300>
+    
+
+</robot>

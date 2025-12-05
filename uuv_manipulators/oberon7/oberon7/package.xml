@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>oberon7</name>
+  <version>0.6.1</version>
+  <description>Meta-package for the Oberon 7, a mock-up robotic manipulator inspired on the Schilling Robotics Orion 7P (ROS 2)</description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>oberon7_control</exec_depend>
+  <exec_depend>oberon7_description</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+  
+</package>

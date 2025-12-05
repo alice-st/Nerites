@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+    X300 Base URDF/Xacro
+    Adapted from RexROV base.xacro (Plankton/UUV Simulator).
+    Defines the main base_link, visual mesh, and collision boxes for the X300.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- === Includes === -->
+  <xacro:include filename="$(find uuv_descriptions)/urdf/common.urdf.xacro"/>
+  <xacro:include filename="$(find uuv_sensor_ros_plugins)/urdf/sensor_snippets.xacro"/>
+  <xacro:include filename="$(find uuv_gazebo_ros_plugins)/urdf/snippets.xacro"/>  
+
+  <!-- === X300 parameters === -->
+  <xacro:property name="namespace" value="x300"/>
+  <xacro:property name="visual_mesh_file" value="file://$(find x300_description)/models/x300/meshes/twin_no_thrusters.dae"/>
+  <xacro:property name="mass" value="30.0"/>
+
+  <!-- === Macro definition for the X300 base === -->
+  <xacro:macro name="x300_base" params="namespace *gazebo inertial_reference_frame">
+    <!-- Base link (ROS convention: x forward, z up) -->
+    <link name="${namespace}/base_link">
+      <inertial>
+        <mass value="${mass}"/>
+        <origin xyz="0 0 0"/>
+        <!-- Rough inertia values (replace with CAD-based ones later) -->
+        <inertia ixx="0.163594" ixy="0.0" ixz="0.0"
+                 iyy="12.425007" iyz="0.0"
+                 izz="12.425007"/>
+      </inertial>
+
+      <!-- Visual mesh -->
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="${visual_mesh_file}" scale="1 1 1"/>
+        </geometry>
+      </visual>
+
+      <!-- Safe collision geometry (simplified boxes) -->
+      <collision>
+        <origin xyz="0 0 -0.1" rpy="0 0 0"/>
+        <geometry><box size="1.5 0.5 0.2"/></geometry>
+      </collision>
+      <collision>
+        <origin xyz="0 0 0.2" rpy="0 0 0"/>
+        <geometry><box size="1.2 0.4 0.3"/></geometry>
+      </collision>
+    </link>
+
+    <!-- Insert hydrodynamics plugin block -->
+    <xacro:insert_block name="gazebo"/>
+
+    <!-- Include actuators (thrusters) -->
+    <xacro:include filename="$(find x300_description)/robots/x300_actuators.xacro"/>
+
+    <!-- Sensors file (optional, create later if needed) -->
+    <!-- <xacro:include filename="$(find x300_description)/urdf/x300_sensors.xacro"/> -->
+
+  </xacro:macro>
+</robot>

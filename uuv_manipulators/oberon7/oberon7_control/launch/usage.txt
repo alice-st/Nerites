@@ -1,0 +1,22 @@
+# Copyright (c) 2025 The Nerites Authors.
+# All rights reserved.
+
+Usage:
+1. Launch a gz world:
+
+ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
+
+2. Launch a vehicle:
+
+ros2 launch uuv_descriptions upload_rexrov_oberon7.launch.py
+
+
+3. Launch the controller
+
+ros2 launch oberon7_control gripper_controllers.launch.py uuv_name:=rexrov
+ros2 launch oberon7_control joint_control.launch.py uuv_name:=rexrov
+ros2 launch oberon7_control joint_effort_controllers.launch.py uuv_name:=rexrov
+ros2 launch oberon7_control jt_cartesian_controller.launch.py uuv_name:=rexrov
+
+
+

@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!--
+    X300 Hydrodynamics Model
+    Adapted from RexROV hydrodynamic model xacro (Plankton/UUV Simulator).
+
+    Uses simplified box geometry and safe positive damping to avoid NaNs in Gazebo.
+-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- === X300 HYDRODYNAMIC PARAMETERS === -->
+
+  <!-- Rough center of buoyancy -->
+  <xacro:property name="cob" value="0.0 0.0 0.06"/>
+
+  <!-- Approximate displaced volume (m³) -->
+  <xacro:property name="volume" value="0.136"/>
+
+  <!-- Macro to inject hydrodynamics into base_link -->
+  <xacro:macro name="x300_hydro_model" params="namespace">
+    <link name="${namespace}/base_link">
+      <neutrally_buoyant>1</neutrally_buoyant>
+      <volume>${volume}</volume>
+
+      <!-- Approximate box for hydrodynamics -->
+      <box>
+        <width>0.5</width>
+        <length>1.5</length>
+        <height>0.4</height>
+      </box>
+
+      <center_of_buoyancy>${cob}</center_of_buoyancy>
+
+      <!-- Use Fossen model -->
+      <hydrodynamic_model>
+        <type>fossen</type>
+
+        <!-- Added mass (from x300.conf) -->
+      <added_mass>
+         2.270   0   0   0     0     0
+         0  22.700 0   0     0     0
+         0   0  22.700 0     0     0
+         0   0   0   0.364   0     0
+         0   0   0   0  0.364  0
+         0   0   0   0     0  0.364
+      </added_mass>
+
+
+        <!-- Linear damping (safe positive values) -->
+        <linear_damping>
+          1.079 175.0 175.0 0.0 100.0 50.0
+        </linear_damping>
+
+        <!-- Quadratic damping (safe positive values) -->
+        <quadratic_damping>
+          10.794 1750.0 1750.0 0.0 100.0 50.0
+        </quadratic_damping>
+
+      </hydrodynamic_model>
+    </link>
+  </xacro:macro>
+
+</robot>

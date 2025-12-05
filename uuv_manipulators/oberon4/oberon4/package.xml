@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>oberon4</name>
+  <version>0.6.1</version>
+  <description>The oberon4 package (ROS 2 metapackage-style)</description>
+
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <!-- Build tool: ament instead of catkin -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- This package just groups these subpackages -->
+  <exec_depend>oberon4_control</exec_depend>
+  <exec_depend>oberon4_description</exec_depend>
+
+  <export>
+    <!-- No special metapackage tag in ROS 2; this can stay empty or be omitted -->
+  </export>
+</package>

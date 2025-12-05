@@ -1,0 +1,24 @@
+/**:
+  ros__parameters:
+    base_link: x300/base_link
+    thrusters:
+      0:
+        name: thruster_0
+        topic: thrusters/0/input
+        direction: [1, 0, 0]
+      1:
+        name: thruster_1
+        topic: thrusters/1/input
+        direction: [1, 0, 0]
+      2:
+        name: thruster_2
+        topic: thrusters/2/input
+        direction: [0, 0, 1]
+      3:
+        name: thruster_3
+        topic: thrusters/3/input
+        direction: [0, 1, 0]
+      4:
+        name: thruster_4
+        topic: thrusters/4/input
+        direction: [0, 1, 0]

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>uuv_manipulators_control</name>
+  <version>0.6.1</version>
+  <description>Cartesian and gripper controllers (ROS 2 Foxy).</description>
+
+  <!-- Maintainers -->
+  <maintainer email="LuizRicardo.Douat@de.bosch.com">Luiz Ricardo Douat</maintainer>
+  <maintainer email="Musa.Marcusso@de.bosch.com">Musa Morena Marcusso Manhaes</maintainer>
+  <maintainer email="Sebastian.Scherer2@de.bosch.com">Sebastian Scherer</maintainer>
+
+  <license>Apache-2.0</license>
+
+  <!-- Build tool -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- Internal packages (build + exec deps) -->
+  <depend>uuv_manipulators_kinematics</depend>
+  <depend>uuv_manipulators_msgs</depend>
+  <depend>uuv_control_cascaded_pid</depend>
+
+  <!-- ROS 2 Python client library -->
+  <exec_depend>rclpy</exec_depend>
+
+  <!-- Messages -->
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>sensor_msgs</depend>
+
+  <!-- TF stack (ROS 2) -->
+  <depend>tf2_ros</depend>
+
+  <!-- Python / math libs (handled via rosdep / system pkg) -->
+  <exec_depend>python3-numpy</exec_depend>
+
+  <!-- KDL -->
+  <exec_depend>orocos_kdl</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
