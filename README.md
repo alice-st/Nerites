@@ -13,7 +13,7 @@ It extends the UUV Simulator ecosystem with new vehicles, controllers, sonar mod
 * Multi-vehicle simulation  
 
 <p align="center">
-  <img width="600" src="images/nerites_intro.png">
+  <img width="600" src="images/nerites_banner.png">
 </p>
 
 ---
