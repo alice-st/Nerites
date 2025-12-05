@@ -1,0 +1,22 @@
+1. Launch a Gazebo world: 
+ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
+
+2. Launch REXROV:
+
+ros2 launch uuv_descriptions upload_rexrov_default.launch.py
+
+3. Run one of the controllers:
+
+ros2 launch uuv_trajectory_control rov_pid_controller.launch.py uuv_name:=rexrov
+ros2 launch uuv_trajectory_control rov_mb_fl_controller.launch.py uuv_name:=rexrov
+ros2 launch uuv_trajectory_control rov_mb_sm_controller.launch.py uuv_name:=rexrov
+ros2 launch uuv_trajectory_control  rov_nl_pid_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+ros2 launch uuv_trajectory_control rov_pd_grav_compensation_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+ros2 launch uuv_trajectory_control rov_sf_controller.launch.py uuv_name:=rexrov 
+ros2 launch uuv_trajectory_control rov_ua_pid_controller.launch.py uuv_name:=rexrov 
+ros2 launch uuv_trajectory_control rov_nmb_sm_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+
+
+4. Send the waypoints:
+
+ros2 launch uuv_control_utils send_waypoints_file.launch.py uuv_name:=rexrov"

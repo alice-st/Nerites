@@ -55,10 +55,10 @@ def main():
 
     choices = ['velocity', 'horz_angle', 'vert_angle']
     assert values['component'] in choices, ('Component values must be one of ' + str(choices))
+    
     if values['component'] == 'velocity':
         # Just a guess that it should be >= instead of >
         assert values['mean'] >= 0, '"mean" parameter must be >= 0'
-
     else:
         values['min'] *= pi / 180.0
         values['max'] *= pi / 180.0
@@ -84,6 +84,7 @@ def main():
 
     future = set_model.call_async(req)
     rclpy.spin_until_future_complete(node, future)
+
     if future.result() is not None:
         prop = future.result()
         if prop.success:

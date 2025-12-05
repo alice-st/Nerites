@@ -60,8 +60,10 @@ def main():
     node.get_logger().info('Duration [s]=' + ('Inf.' if duration < 0 else str(duration)))
 
     force = [0.0, 0.0, 0.0]
+
     if node.has_parameter('force'):
-        force = node.get_parameter('force').value
+        force_raw = node.get_parameter('force').value
+        force = [float(x) for x in force_raw.split(',')]
         if len(force) != 3:
             raise RuntimeError('Invalid force vector')
         # Ensure type is float
@@ -71,7 +73,9 @@ def main():
 
     torque = [0.0, 0.0, 0.0]
     if node.has_parameter('torque'):
-        torque = node.get_parameter('torque').value
+        torque_raw = node.get_parameter('torque').value
+        torque = [float(x) for x in torque_raw.split(',')]
+
         if len(torque) != 3:
             raise RuntimeError('Invalid torque vector')
         # Ensure type is float

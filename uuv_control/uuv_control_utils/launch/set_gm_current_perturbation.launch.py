@@ -28,12 +28,12 @@ def generate_launch_description():
     # Declare launch arguments
     # ------------------------
     args = [
-        DeclareLaunchArgument('component'),
-        DeclareLaunchArgument('mean', default_value='0.0'),
+        DeclareLaunchArgument('component', default_value='velocity'),
+        DeclareLaunchArgument('mean', default_value='0.2'),
         DeclareLaunchArgument('min', default_value='0.0'),
-        DeclareLaunchArgument('max', default_value='0.0'),
-        DeclareLaunchArgument('noise', default_value='0.0'),
-        DeclareLaunchArgument('mu', default_value='0.0'),
+        DeclareLaunchArgument('max', default_value='0.4'),
+        DeclareLaunchArgument('noise', default_value='0.02'),
+        DeclareLaunchArgument('mu', default_value='0.1'),
     ]
 
     # ------------------------

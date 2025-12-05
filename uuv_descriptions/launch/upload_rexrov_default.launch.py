@@ -175,7 +175,7 @@ def generate_launch_description():
         DeclareLaunchArgument('roll', default_value='0.0'),
         DeclareLaunchArgument('pitch', default_value='0.0'),
         DeclareLaunchArgument('yaw', default_value='0.0'),
-        DeclareLaunchArgument('namespace', default_value='x300'),
+        DeclareLaunchArgument('namespace', default_value='rexrov'),
         DeclareLaunchArgument('use_ned_frame', default_value='false'),
         DeclareLaunchArgument('write_file_on_disk', default_value='false'),
         DeclareLaunchArgument('mode', default_value='default'),

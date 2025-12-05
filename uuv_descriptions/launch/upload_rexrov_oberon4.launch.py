@@ -2,15 +2,23 @@
 # All rights reserved.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, OpaqueFunction 
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    GroupAction,
+    OpaqueFunction,
+)
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace, SetParameter
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
+
 from nerites_utils.time import is_sim_time
+
 import xacro
 import os
+
 
 def launch_setup(context, *args, **kwargs):
     # Retrieve LaunchConfiguration values
@@ -42,31 +50,32 @@ def launch_setup(context, *args, **kwargs):
         'namespace': namespace,
         'inertial_reference_frame': inertial_ref
     }
+    # Depending on xacro version, this returns an XML string
     doc = xacro.process(xacro_file, mappings=mappings)
+
+    # URDF spawner
+    args = (
+        f"-gazebo_namespace /gazebo "
+        f"-x {x} -y {y} -z {z} "
+        f"-R {roll} -P {pitch} -Y {yaw} "
+        f"-entity {namespace} -topic robot_description").split()
+
 
     # Nodes
     group_actions = GroupAction([
         PushRosNamespace(namespace),
 
+        # Spawn the entity into Gazebo using gazebo_ros spawn_entity.py
         Node(
-            package='uuv_descriptions',
-            executable='spawn_model',
             name='urdf_spawner',
+            package='gazebo_ros',
+            executable='spawn_entity.py',
             output='screen',
-            arguments=[
-                '-urdf',
-                '-x', x,
-                '-y', y,
-                '-z', z,
-                '-R', roll,
-                '-P', pitch,
-                '-Y', yaw,
-                '-model', namespace,
-                '-param', f"/{namespace}/robot_description"
-            ],
+            arguments=args,
             parameters=[{'use_sim_time': res}]
         ),
 
+        # Robot state publisher with the URDF from xacro
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
@@ -86,21 +95,21 @@ def launch_setup(context, *args, **kwargs):
         SetParameter(name=f"{namespace}/arms/names", value=['oberon4'])
     ]
 
-    # FIX: remove IncludeLaunchDescription for YAML (we can attach YAML to a node later)
-    # Placeholder for arm YAML (needs to be attached to a specific node)
+    # Arm configuration YAML
     arm_config_path = os.path.join(
         FindPackageShare('oberon4_description').perform(context),
         'params',
         'robot_config.yaml'
     )
-
+    
+    # (arm_config_path is ready to be used where needed)
     # message_to_tf include
     message_to_tf = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
                 FindPackageShare('uuv_assistants').perform(context),
                 'launch',
-                'message_to_tf.launch'
+                'message_to_tf.launch.py'
             )
         ),
         launch_arguments={
@@ -111,6 +120,7 @@ def launch_setup(context, *args, **kwargs):
     )
 
     return [group_actions, *arms_params, message_to_tf]
+
 
 def generate_launch_description():
     return LaunchDescription([

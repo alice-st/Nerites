@@ -122,27 +122,26 @@ class AUVGeometricTrackingController(Node):
         assert self.n_fins > 0
 
         # Reading the mapping for roll commands
-        self.map_roll = self.get_parameter_or_helper('map_roll', [0, 0, 0, 0]).value
-        self.map_roll = [float(val) for val in self.map_roll]
+        map_roll_raw = self.get_parameter_or_helper('map_roll', [0, 0, 0, 0]).value
+        self.map_roll = [float(x.strip()) for x in map_roll_raw.split(",") if x.strip() != ""]
         assert isinstance(self.map_roll, list)
         assert len(self.map_roll) == self.n_fins
 
         # Reading the mapping for the pitch commands
-        self.map_pitch = self.get_parameter_or_helper('map_pitch', [0, 0, 0, 0]).value
-        self.map_pitch = [float(val) for val in self.map_pitch]
-
+        map_pitch_raw = self.get_parameter_or_helper('map_pitch', [0, 0, 0, 0]).value
+        self.map_pitch = [float(x.strip()) for x in map_pitch_raw.split(",") if x.strip() != ""]
         assert isinstance(self.map_pitch, list)
         assert len(self.map_pitch) == self.n_fins
         
         # Reading the mapping for the yaw commands
-        self.map_yaw = self.get_parameter_or_helper('map_yaw', [0, 0, 0, 0]).value
-        self.map_yaw = [float(val) for val in self.map_yaw]
-
+        map_yaw_raw = self.get_parameter_or_helper('map_yaw', [0, 0, 0, 0]).value
+        self.map_yaw = [float(x.strip()) for x in map_yaw_raw.split(",") if x.strip() != ""]
         assert isinstance(self.map_yaw, list)
         assert len(self.map_yaw) == self.n_fins
 
         # Retrieve the thruster configuration parameters
         self.thruster_config = self.get_parameters_by_prefix('thruster_config')
+
         #Parse parameters to dictionary and unpack params to values
         self.thruster_config = parse_nested_params_to_dict(self.thruster_config, '.', True)
 
@@ -151,9 +150,7 @@ class AUVGeometricTrackingController(Node):
             'topic_prefix', 'topic_suffix', 'frame_base', 'max_thrust']
         for p in thruster_params:
             if p not in self.thruster_config:
-                raise RuntimeError(
-                    'Parameter <%s> for thruster conversion function is '
-                    'missing' % p)
+                raise RuntimeError(f'Parameter {p} for thruster conversion function is missing')
 
         # Setting up the thruster topic name
         self.thruster_topic = self.build_thruster_topic_name(self.namespace,
@@ -200,6 +197,7 @@ class AUVGeometricTrackingController(Node):
         pos = np.array([trans.transform.translation.x,
                         trans.transform.translation.y,
                         trans.transform.translation.z])
+       
         quat = np.array([trans.transform.rotation.x,
                          trans.transform.rotation.y,
                          trans.transform.rotation.z,
@@ -348,6 +346,7 @@ class AUVGeometricTrackingController(Node):
         if self.local_planner.inertial_frame_id == 'world_ned':
             rtf[:, 1] *= -1
             rtf[:, 2] *= -1
+            
         # Transform orientation command into fin angle set points
         fins = rtf.dot(rpy)
 
@@ -383,11 +382,11 @@ class AUVGeometricTrackingController(Node):
 
     # =========================================================================
     def to_dict_vect3(self, *args) -> dict:
-        return { 'x': args[0], 'y': args[1], 'z': args[2] }
+        return {'x': args[0], 'y': args[1], 'z': args[2]}
 
     # =========================================================================
     def to_dict_quat(self, *args) -> dict:
-        return { 'x': args[0], 'y': args[1], 'z': args[2], 'w': args[3] }
+        return {'x': args[0], 'y': args[1], 'z': args[2], 'w': args[3]}
 
 
 #==============================================================================

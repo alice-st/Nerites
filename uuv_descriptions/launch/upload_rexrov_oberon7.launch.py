@@ -44,28 +44,26 @@ def launch_setup(context, *args, **kwargs):
     }
     doc = xacro.process(xacro_file, mappings=mappings)
 
+    # URDF spawner
+    args = (
+        f"-gazebo_namespace /gazebo "
+        f"-x {x} -y {y} -z {z} "
+        f"-R {roll} -P {pitch} -Y {yaw} "
+        f"-entity {namespace} -topic robot_description").split()
+
+
     # Build main group
     group_actions = GroupAction([
         PushRosNamespace(namespace),
 
         # Spawn URDF model into Gazebo
         Node(
-            package='uuv_descriptions',
-            executable='spawn_model',
             name='urdf_spawner',
+            package='gazebo_ros',
+            executable='spawn_entity.py',
             output='screen',
             respawn=False,
-            arguments=[
-                '-urdf',
-                '-x', x,
-                '-y', y,
-                '-z', z,
-                '-R', roll,
-                '-P', pitch,
-                '-Y', yaw,
-                '-model', namespace,
-                '-param', f"/{namespace}/robot_description"
-            ],
+            arguments=args,
             parameters=[{'use_sim_time': sim_time}]
         ),
 
@@ -75,7 +73,7 @@ def launch_setup(context, *args, **kwargs):
             executable='robot_state_publisher',
             name='robot_state_publisher',
             output='screen',
-            respawn=True,
+            respawn=False,
             parameters=[
                 {'use_sim_time': sim_time},
                 {'robot_description': doc}
@@ -89,12 +87,10 @@ def launch_setup(context, *args, **kwargs):
         SetParameter(name=f"{namespace}/arms/names", value=['oberon7'])
     ]
 
-    # Oberon7 config YAML (path reference, to be attached to a node later)
     oberon7_config_path = os.path.join(
         FindPackageShare('oberon7_description').perform(context),
         'params', 'robot_config.yaml'
     )
-    # NOTE: If you want this loaded automatically, attach to a node with parameters=[oberon7_config_path]
 
     # Include message_to_tf.launch
     message_to_tf = IncludeLaunchDescription(
@@ -102,7 +98,7 @@ def launch_setup(context, *args, **kwargs):
             os.path.join(
                 FindPackageShare('uuv_assistants').perform(context),
                 'launch',
-                'message_to_tf.launch'
+                'message_to_tf.launch.py'
             )
         ),
         launch_arguments={

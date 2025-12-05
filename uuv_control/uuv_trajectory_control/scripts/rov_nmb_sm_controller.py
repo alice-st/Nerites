@@ -23,6 +23,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 import rclpy
 import numpy as np
 import traceback
@@ -77,8 +78,7 @@ class ROV_NMB_SMController(DPControllerBase):
             if len(coefs) == 6:
                 self._K = np.array(coefs)
             else:
-                raise RuntimeError('K coefficients: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('K coefficients: 6 coefficients needed')
 
         self._logger.info('K=' + str(self._K))
 
@@ -93,8 +93,7 @@ class ROV_NMB_SMController(DPControllerBase):
             if len(coefs) == 6:
                 self._Kd = np.array(coefs)
             else:
-                raise RuntimeError('Kd coefficients: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('Kd coefficients: 6 coefficients needed')
 
         self._logger.info('Kd=' + str(self._Kd))
 
@@ -110,8 +109,7 @@ class ROV_NMB_SMController(DPControllerBase):
             if len(coefs) == 6:
                 self._Ki = np.array(coefs)
             else:
-                raise RuntimeError('Ki coeffcients: 6 coefficients '
-                                         'needed')
+                raise RuntimeError('Ki coeffcients: 6 coefficients needed')
         self._logger.info('Ki=' + str(self._Ki))
 
         if self.has_parameter('slope'):
@@ -181,7 +179,6 @@ class ROV_NMB_SMController(DPControllerBase):
     def set_sm_controller_params_callback(self, request, response):
         response.success = True
         return response
-        #return SetSMControllerParamsResponse(True)
 
     # =========================================================================
     def get_sm_controller_params_callback(self, request, response):

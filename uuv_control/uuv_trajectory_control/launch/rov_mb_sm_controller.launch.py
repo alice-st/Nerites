@@ -54,7 +54,7 @@ def launch_setup(context, *args, **kwargs):
     # === Includes ===
     thruster_manager_launch = os.path.join(
         get_package_share_directory('uuv_thruster_manager'),
-        'launch', 'thruster_manager.launch'
+        'launch', 'thruster_manager.launch.py'
     )
 
     thruster_include = IncludeLaunchDescription(

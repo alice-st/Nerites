@@ -37,7 +37,8 @@ from uuv_gazebo_ros_plugins_msgs.srv import SetThrusterState, SetThrusterEfficie
 from geometry_msgs.msg import Point, WrenchStamped, Vector3
 from rclpy.node import Node
 
-from nerites_utils.param_helper import parse_nested_params_to_dict, time_in_float_sec, float_sec_to_int_sec_nano, is_sim_time
+from nerites_utils.param_helper import parse_nested_params_to_dict
+from nerites_utils.time import time_in_float_sec, float_sec_to_int_sec_nano, is_sim_time
 
 class DisturbanceManager(Node):
 
@@ -53,6 +54,7 @@ class DisturbanceManager(Node):
         # out_hdlr.setLevel(logging.INFO)
         # self._logger.addHandler(out_hdlr)
         # self._logger.setLevel(logging.INFO)
+        
         self.get_logger().info('Starting disturbance manager')
         self.thread = None
 

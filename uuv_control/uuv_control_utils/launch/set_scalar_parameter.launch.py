@@ -67,9 +67,9 @@ def launch_setup(context, *args, **kwargs):
 
 def generate_launch_description():
     return LaunchDescription([
-        DeclareLaunchArgument('uuv_name', description='Namespace of the vehicle (e.g., rexrov)'),
-        DeclareLaunchArgument('service_name', description='Gazebo hydrodynamic service to call'),
-        DeclareLaunchArgument('data', description='Scalar value to set for the service'),
+        DeclareLaunchArgument('uuv_name', default_value='rexrov', description='Namespace of the vehicle (e.g., rexrov)'),
+        DeclareLaunchArgument('service_name', default_value='set_fluid_density', description='Gazebo hydrodynamic service to call'),
+        DeclareLaunchArgument('data', default_value='1028.0', description='Scalar value to set for the service'),
 
         OpaqueFunction(function=launch_setup)
     ])

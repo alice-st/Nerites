@@ -11,13 +11,13 @@
 	ros2 launch uuv_trajectory_control rov_nl_pid_controller.launch.py model_name:=rexrov uuv_name:=rexrov
 
 4a. Launch disturbances:
-	ros2 launch uuv_control_utils apply_link_wrench.launch.py uuv_name:=rexrov
-	ros2 launch uuv_control_utils set_gm_current_perturbation.launch.py uuv_name:=rexrov
+	ros2 launch uuv_control_utils set_thruster_output_efficiency.launch.py uuv_name:=rexrov
 	ros2 launch uuv_control_utils set_scalar_parameter.launch.py uuv_name:=rexrov
+	ros2 launch uuv_control_utils set_gm_current_perturbation.launch.py uuv_name:=rexrov
+	ros2 launch uuv_control_utils apply_link_wrench.launch.py uuv_name:=rexrov
 	ros2 launch uuv_control_utils set_timed_current_perturbation.launch.py uuv_name:=rexrov
 	ros2 launch uuv_control_utils start_disturbance_manager.launch.py uuv_name:=rexrov
 	ros2 launch uuv_control_utils set_thruster_state.launch.py uuv_name:=rexrov
-	ros2 launch uuv_control_utils set_thruster_output_efficiency.launch.py uuv_name:=rexrov
 
 
 4b. Launch trajectories:

@@ -351,6 +351,7 @@ class DPControllerBase(Node):
             self._reference['rot'] = reference.q
             self._reference['vel'] = np.hstack((reference.v, reference.w))
             self._reference['acc'] = np.hstack((reference.a, reference.alpha))
+            
         if reference is not None and self._reference_pub.get_subscription_count() > 0:
             # Publish current reference
             msg = TrajectoryPoint()
@@ -519,7 +520,7 @@ class DPControllerBase(Node):
         msg = AUVCommand()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = '%s/%s' % (self._namespace, self._vehicle_model.body_frame_id)
-        msg.surge_speed = surge_speed
+        msg.surge_speed = float(surge_speed)
         msg.command.force.x = max(self._min_thrust, wrench[0])
         msg.command.force.y = wrench[1]
         msg.command.force.z = wrench[2]

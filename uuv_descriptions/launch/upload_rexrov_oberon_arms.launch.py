@@ -43,6 +43,12 @@ def launch_setup(context, *args, **kwargs):
         'inertial_reference_frame': inertial_ref
     }
     doc = xacro.process(xacro_file, mappings=mappings)
+    
+    args = (
+        f"-gazebo_namespace /gazebo "
+        f"-x {x} -y {y} -z {z} "
+        f"-R {roll} -P {pitch} -Y {yaw} "
+        f"-entity {namespace} -topic robot_description").split()
 
     # === Main namespace group ===
     group_actions = GroupAction([
@@ -50,22 +56,12 @@ def launch_setup(context, *args, **kwargs):
 
         # Spawn URDF into Gazebo
         Node(
-            package='uuv_descriptions',
-            executable='spawn_model',
             name='urdf_spawner',
+            package='gazebo_ros',
+            executable='spawn_entity.py',
             output='screen',
             respawn=False,
-            arguments=[
-                '-urdf',
-                '-x', x,
-                '-y', y,
-                '-z', z,
-                '-R', roll,
-                '-P', pitch,
-                '-Y', yaw,
-                '-model', namespace,
-                '-param', f"/{namespace}/robot_description"
-            ],
+            arguments=args,
             parameters=[{'use_sim_time': sim_time}]
         ),
 
@@ -106,7 +102,7 @@ def launch_setup(context, *args, **kwargs):
             os.path.join(
                 FindPackageShare('uuv_assistants').perform(context),
                 'launch',
-                'publish_body_sname.launch'
+                'publish_body_sname.launch.py'
             )
         ),
         launch_arguments={
@@ -121,7 +117,7 @@ def launch_setup(context, *args, **kwargs):
             os.path.join(
                 FindPackageShare('uuv_assistants').perform(context),
                 'launch',
-                'message_to_tf.launch'
+                'message_to_tf.launch.py'
             )
         ),
         launch_arguments={

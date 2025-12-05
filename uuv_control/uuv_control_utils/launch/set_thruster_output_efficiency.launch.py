@@ -67,7 +67,7 @@ def launch_setup(context, *args, **kwargs):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('uuv_name', description='Vehicle namespace'),
-        DeclareLaunchArgument('starting_time', default_value='0.0', description='When to start applying the efficiency change'),
+        DeclareLaunchArgument('starting_time', default_value='0', description='When to start applying the efficiency change'),
         DeclareLaunchArgument('thruster_id', default_value='0', description='ID of the thruster'),
         DeclareLaunchArgument('efficiency', default_value='1.0', description='Output efficiency scaling factor'),
         DeclareLaunchArgument('duration', default_value='-1', description='Duration for the change (-1 means indefinite)'),

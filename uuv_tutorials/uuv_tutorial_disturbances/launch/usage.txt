@@ -1,0 +1,7 @@
+Usage:
+
+ros2 launch uuv_tutorial_disturbances tutorial_disturbance_manager.launch.py
+ros2 launch uuv_tutorial_disturbances tutorial_body_wrench.launch.py
+ros2 launch uuv_tutorial_disturbances tutorial_thruster_efficiency.launch.py
+ros2 launch uuv_tutorial_disturbances tutorial_thruster_state.launch.py
+ros2 launch uuv_tutorial_disturbances tutorial_timed_current.launch.py

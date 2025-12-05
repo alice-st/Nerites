@@ -50,7 +50,7 @@ def launch_setup(context, *args, **kwargs):
         IncludeLaunchDescription(
             AnyLaunchDescriptionSource(os.path.join(
                 get_package_share_directory('uuv_thruster_manager'),
-                'launch/thruster_manager.launch'
+                'launch/thruster_manager.launch.py'
             )),
             launch_arguments={
                 'uuv_name': uuv_name,
@@ -212,7 +212,7 @@ def launch_setup(context, *args, **kwargs):
 
 def generate_launch_description():
     return LaunchDescription([
-        DeclareLaunchArgument('uuv_name'),
+        DeclareLaunchArgument('uuv_name', default_value='rexrov'),
         DeclareLaunchArgument('model_name', default_value=LaunchConfiguration('uuv_name')),
         DeclareLaunchArgument('saturation', default_value='1200'),
         DeclareLaunchArgument('gui_on', default_value='true'),

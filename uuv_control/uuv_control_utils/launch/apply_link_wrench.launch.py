@@ -49,10 +49,10 @@ def generate_launch_description():
     return LaunchDescription([
         # Arguments
         DeclareLaunchArgument('uuv_name'),
-        DeclareLaunchArgument('force_x', default_value='0'),
-        DeclareLaunchArgument('force_y', default_value='0'),
-        DeclareLaunchArgument('force_z', default_value='0'),
-        DeclareLaunchArgument('torque_x', default_value='0'),
+        DeclareLaunchArgument('force_x', default_value='1'),
+        DeclareLaunchArgument('force_y', default_value='2'),
+        DeclareLaunchArgument('force_z', default_value='3'),
+        DeclareLaunchArgument('torque_x', default_value='4'),
         DeclareLaunchArgument('torque_y', default_value='0'),
         DeclareLaunchArgument('torque_z', default_value='0'),
         DeclareLaunchArgument('starting_time', default_value='0'),

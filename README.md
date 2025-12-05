@@ -1,163 +1,232 @@
-# [Plankton](https://www.liquid-tech.ai/)
-Open source simulator for maritime robotics researchers
+🌊 Nerites Underwater Simulator
 
-![uuv mapping](./uuv_mapping.png)
+A Modular ROS 2 Underwater Robotics Framework for AUVs, ROVs & Reinforcement Learning
 
-Plankton is an initiative aiming at simplifying robotics research in the maritime domain. 
-It is a maritime environment simulator with an open source core, and a special focus on ease of use, stability, speed and sim to real. Its middleware of choice is ROS 2.
+<p align="center"> <img src="https://img.shields.io/badge/ROS-2%20Foxy-blue.svg" /> <img src="https://img.shields.io/badge/Gazebo-Classic-orange.svg" /> <img src="https://img.shields.io/badge/Physics-Underwater%20Hydrodynamics-00b3b3.svg" /> <img src="https://img.shields.io/badge/RL-Gym%20Environment-green.svg" /> <img src="https://img.shields.io/badge/Status-Active-success" /> </p>
+🐋 Overview
 
-We intend to build a sustainable and open source core simulator for maritime robotics research. This core will support flexible specification of sensor suites and environmental conditions.
+Nerites Underwater Simulator is a complete ROS 2 Foxy–based simulation ecosystem for underwater robotics research, supporting AUVs, ROVs, manipulators, GPU sonar, camera sensors, and reinforcement learning environments.
 
-This project benefits from great open source advances in the simulation domain, mainly ROS, Gazebo and its plugin UUV Simulator. 
-It is also built on data characterizing the needs of robotics researchers in terms of simulation. We gathered these data in our [wiki](https://github.com/Liquid-ai/Plankton/wiki), including the results of our [own survey](https://github.com/Liquid-ai/Plankton/blob/master/user_needs/Survey_about_simulators_for_robotics_research.pdf) on simulation needs.
+Built on top of the UUV Simulator framework and extended with custom vehicle models and controllers, Nerites provides everything needed for:
 
-# Roadmap #
-The first iteration of the projet is built from UUV Simulator and gazebo 9. We made UUV Simulator compatible with ROS2. In the following months, we intend to improve the performance (speed) of the simulator, and to test different alternatives to gazebo 9 or 11. We will choose the best simulation framework according to our users present and future needs.
+⚓ Autonomous underwater robotics
 
-We released a beta version of UUV Simulator for ROS 2 in September. The last release in December 2020 made our simulator Plankton compatible with ROS 2 Foxy Fitzroy.
+🤖 Control & thrust allocation research
 
+🧠 Reinforcement learning for underwater vehicles
 
-# Contributing #
-You can contribute by reporting bugs, proposing new features, improving documentation, contributing to code.
-### Reporting bugs ###
-Use our issue section on GitHub. Please check before that the issue is not already reported.
-### Proposing new features ###
-Please check first the list of feature requests. If it is not there and you think is a feature that might be interesting for users, please submit your request as a new issue.
-### Improving documentation ###
-If you feel something is missing in the documentation, please don't hesitate to open an issue to let us know. Even better, if you think you can improve it yourself, it would be a great contribution to the community!
-### Contributing to code ###
-So you are considering making a code contribution, great! We love to have contributions from the community.
-Before starting hands-on on coding, please check out our issue board to see if we are already working on that, it would be a pity putting an effort into something just to discover that someone else was already working on that. In case of doubt or to discuss how to proceed, please contact one of us (or send an email to loic.mougeolle@naval-group.com).
+🛠 Manipulation tasks with Oberon4 & Oberon7 arms
 
-# Installation #
-Plankton currently supports:
+🌍 Simulation in realistic ocean and testbed environments
 
-- **ROS 2 Foxy** with **Gazebo 9** or **Gazebo 11** and **Ubuntu 20.04**
+🚀 Key Features
+🌍 Underwater Worlds
 
-- **ROS 2 Eloquent**, **Ubuntu 18.04** and **Gazebo 9**
+Includes all environments from UUV Simulator:
 
-### 1. Install ROS 2 Foxy 
+Ocean environments
 
-If you don’t have ROS 2 Foxy installed, follow the instructions below and prefer to install the `ros-foxy-desktop` package:
-<https://index.ros.org/doc/ros2/Installation/Foxy/Linux-Install-Debians/>
+Pool/tank worlds
 
-### 2. Install Gazebo 11
+Structured testbeds
 
-If you don't have Gazebo 11 installed, open a terminal and follow the steps below:
+Hydrodynamic & buoyancy plugins
 
-```
-sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
-wget https://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
-sudo apt-get update
-sudo apt-get install gazebo11
-sudo apt-get install libgazebo11-dev
-```
+Current, turbidity & noise models
 
-You can write `gazebo` in a terminal to make sure that gazebo runs correctly. Write `gazebo --version` to ensure that the version number is 11.X.
+🤖 Supported Vehicles
+Vehicle  Description
+RexROV   Heavy-duty ROV with full thruster model
+RexROV + Oberon4  ROV + 4-DOF manipulator
+RexROV + Oberon7  ROV + 7-DOF high-precision arm
+ECA A9 AUV  Torpedo-style autonomous underwater vehicle
+X300 AUV/ROV   Lightweight, configurable research vehicle
 
->For more information about the installation of Gazebo, refer to the official installation documentation (beware that the default installation command will not install the version 11): 
-><http://gazebosim.org/tutorials?tut=install_ubuntu&cat=install>
+All vehicles include:
 
-### 3. Install the ros packages for gazebo
+Hydrodynamics
 
-Write in a terminal:  
-`sudo apt install ros-foxy-gazebo-ros-pkgs`
+Thruster models
 
->See <http://gazebosim.org/tutorials?tut=ros2_installing&cat=connect_ros> for more detailed information about gazebo and ROS 2 connection.
+Sensors
 
-### 4. Build the Plankton plugin
+ROS 2 interfaces
 
-If you don’t have a ROS 2 workspace yet, create a workspace that will contain your projects. In this installation guide, we choose an original name for this directory, `ros2_ws`:  
-`mkdir -p ~/ros2_ws/src`
+Launch configurations
 
-Move to the src directory:  
-`cd ~/ros2_ws/src`
+🎛️ Controllers
 
-Make sure git is installed:  
-`sudo apt install git`
+Nerites includes modular ROS 2 controllers:
 
-Now, clone the Plankton repository:  
-`git clone https://www.github.com/Liquid-ai/Plankton.git`
+NED controller
 
-At this point, you need to source 2 different files described below to configure ROS 2 and Gazebo environment variables: 
-   - For ROS 2 variables  
-`source /opt/ros/foxy/setup.bash`  
-   - For Gazebo   
-`source /usr/share/gazebo/setup.sh`
+Non-NED controller
 
-In order to download missing packages, install ROS dependency manager. Write the commands below in a terminal:  
-```
-sudo apt install python3-rosdep
-sudo rosdep init
+Velocity, depth, heading controllers
+
+Station keeping
+
+Control allocator for multi-thruster vehicles
+
+🎥 Sensor Suite
+
+RGB camera
+
+GPU sonar (gpu_ray sensor)
+
+IMU (Accel + Gyro)
+
+Depth sensor
+
+DVL emulation
+
+Noisy underwater dynamics
+
+ROS 2 Camera Info & LaserScan publishers
+
+🧠 Gym Environment for Reinforcement Learning
+
+A built-in RL environment compatible with:
+
+Stable Baselines
+
+RLlib
+
+CleanRL
+
+Custom PyTorch policies
+
+Features:
+
+reset() / step() Gym API
+
+Randomized underwater conditions
+
+Task variations (hovering, waypoint following, depth keeping)
+
+Multi-vehicle support
+
+📦 Repository Structure
+nerites_sim_ws/
+└── src/
+    ├── Nerites/
+    │   ├── uuv_simulator
+    │   ├── uuv_descriptions
+    │   ├── uuv_gazebo
+    │   ├── uuv_gazebo_worlds
+    │   ├── uuv_sensor_plugins
+    │   ├── uuv_world_plugins
+    │   ├── uuv_control
+    │   ├── uuv_assistants
+    │   ├── uuv_teleop
+    │   ├── nerites
+    │   └── nerites_utils
+    │
+    ├── eca_a9_nerites/
+    ├── x300_description/
+    ├── kdl_parser_py/
+    └── ...
+
+🔧 Installation
+1️⃣ Install ROS 2 Foxy
+
+https://docs.ros.org/en/foxy/Installation.html
+
+2️⃣ Install Gazebo Classic
+sudo apt install gazebo11 ros-foxy-gazebo-*
+
+3️⃣ Clone the Simulator Workspace
+git clone <your-repo-url> ~/nerites_sim_ws
+cd ~/nerites_sim_ws/src
+
+4️⃣ Install dependencies
 rosdep update
-```
+rosdep install --from-paths . --ignore-src -y
 
-Browse to the root of your workspace and check for missing dependencies:  
-```
-cd ~/ros2_ws/
-rosdep install -i --from-path src --rosdistro foxy -y
-```
+5️⃣ Build
+cd ~/nerites_sim_ws
+colcon build --symlink-install
+source install/setup.bash
 
-Install Colcon, the build tool system:  
-`sudo apt install python3-colcon-common-extensions`
+▶️ Launching the Simulation
+🌍 Start a world
+ros2 launch uuv_gazebo_worlds ocean_world.launch.py
 
-Build the Plankton repository:  
-`colcon build --packages-up-to plankton`
+🤖 Spawn RexROV
+ros2 launch rexrov_sim bringup.launch.py
 
-Source the file for your installation workspace (change the path accordingly)  
-`source $HOME/ros2_ws/install/setup.bash`  
+🤖 Spawn RexROV + Oberon7 arm
+ros2 launch rexrov_sim bringup.launch.py use_arm:=oberon7
 
-Next step is… No next step, you are already done!
-If everything went well, you should be able to run example cases.
+🚀 Launch the ECA A9
+ros2 launch eca_a9_nerites start_eca_a9.launch.py
 
-### 5. Test the package
+🐋 Launch the X300
+ros2 launch x300_description spawn_x300.launch.py
 
-Note: Every time you open a new terminal, you need to source 3 different files described below to configure ROS 2 and Gazebo environment variables. Write the following each time you start a new terminal to deal with ROS 2 / Gazebo stuff, or prefer to add them at the end of your .bashrc file with `gedit ~/.bashrc`. For the latter, don’t forget to source your .bashrc to enforce the update after saving these changes, or open a fresh terminal.  
+📡 Viewing Sensors
+Camera
+rqt_image_view /eca_a9/camera/image
 
-   - For ROS 2 variables  
-`source /opt/ros/foxy/setup.bash`  
-   - For your installation workspace (change the path accordingly)  
-`source $HOME/ros2_ws/install/setup.bash`  
-   - For Gazebo   
-`source /usr/share/gazebo/setup.sh`
+Sonar
+rviz2 -d sonar_visualization.rviz
 
-Let's start testing Plankton. 
-Open a new terminal (don’t forget to source ROS 2 / Gazebo files if necessary) and write as below to open a gazebo world:  
-`ros2 launch uuv_gazebo_worlds ocean_waves.launch`
+🧠 Reinforcement Learning Example
+import gym
+import nerites_gym
 
-Open again a new terminal (don't forget to source ROS 2 / Gazebo files if necessary), and spawn the rexrov robot:  
-`ros2 launch uuv_descriptions upload_rexrov.launch mode:=default x:=0 y:=0 z:=-20 namespace:=rexrov`
+env = gym.make("NeritesAUVEnv-v0")
+obs = env.reset()
 
-Add a joystick node to control it remotely (new terminal needed) :  
-`ros2 launch uuv_control_cascaded_pid joy_velocity.launch uuv_name:=rexrov model_name:=rexrov joy_id:=0`
+for step in range(1000):
+    action = policy(obs)
+    obs, reward, done, info = env.step(action)
+    if done:
+        obs = env.reset()
 
-Here, joy_id represents your joystick id, defined in your OS. You can determine what is your id by installing `sudo apt-get install jstest-gtk` and running it.
+🛠 Contributing
 
-A more complete documentation of the UUV Simulator features is available here:  
-<https://uuvsimulator.github.io/>
+Contributions are welcome!
+Areas where help is appreciated:
 
-Beware that the UUV Simulator documentation is written for ROS 1, so you will have to make adjustments on given commands to make it work in Plankton.
+New vehicle models
 
-## FAQ
+Improved sonar simulation
 
-#### Logging and print information are not displayed in the terminal  
-It is a problem affecting eloquent and launch files. Prefix your `ros2 launch` command with `stdbuf -o L`. If you are using python launch file, you can launch your node with the `emulate_tty` argument:    
-```
-Node(
-    package='package_name',
-    node_executable='package_exec',
-    output='screen',
-    emulate_tty=True,
-)
-```
+Underwater manipulation
 
-#### The Gazebo worlds show a black screen when using virtual machine
-Try to add the following line to your ~/.bashrc file     
-`export LIBGL_ALWAYS_SOFTWARE=1`
+Reinforcement learning tasks
 
-## External contributions
+Documentation & tutorials
 
-   - Port of the ECA A9 AUV, initially developed for UUV Simulator, to Plankton: https://github.com/GSO-soslab/eca_a9_plankton
+Fork → Branch → Pull Request.
 
-# License #
-Plankton is distributed under Apache License version 2.0 
+📄 License
+
+This project is licensed under Apache 2.0 (or your license of choice).
+
+📢 Citation
+@misc{nerites2025,
+  title  = {Nerites Underwater Simulator},
+  author = {Alice S., Contributors},
+  year   = {2025},
+  url    = {https://github.com/<your-repo>}
+}
+
+🌊 Dive In
+
+Nerites provides a powerful, flexible simulation platform for underwater robotics, research, AI, and RL.
+
+Whether you're developing:
+
+AUV autonomy
+
+ROV manipulation
+
+Thruster allocation
+
+Neural controllers
+
+RL policies
+
+Nerites gives you the ocean — go explore it.

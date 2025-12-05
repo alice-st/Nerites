@@ -46,14 +46,22 @@ def generate_launch_description():
             }.items()
         ),
 
+        TimerAction(
+            period=5.0,
+            actions=[
         IncludeLaunchDescription(
             AnyLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('uuv_descriptions'), 
                     'launch', 
                     'upload_rexrov.launch.py')
             )
+        )
+        ]
         ),
 
+        TimerAction(
+            period=10.0,
+            actions=[
         IncludeLaunchDescription(
             AnyLaunchDescriptionSource(
                 os.path.join(get_package_share_directory('uuv_trajectory_control'), 
@@ -66,10 +74,12 @@ def generate_launch_description():
                 'Kd': Kd,
                 'Ki': Ki,
             }.items()
+        )
+        ]
         ),
 
         TimerAction(
-            period=10.0,
+            period=15.0,
             actions=[
             IncludeLaunchDescription(
                 AnyLaunchDescriptionSource(
