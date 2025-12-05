@@ -1,112 +1,198 @@
-🌊 Nerites Underwater Simulator
+# Nerites Underwater Simulator
 
-A Modular ROS 2 Underwater Robotics Framework for AUVs, ROVs & Reinforcement Learning
+## Motivation
 
-<p align="center"> <img src="https://img.shields.io/badge/ROS-2%20Foxy-blue.svg" /> <img src="https://img.shields.io/badge/Gazebo-Classic-orange.svg" /> <img src="https://img.shields.io/badge/Physics-Underwater%20Hydrodynamics-00b3b3.svg" /> <img src="https://img.shields.io/badge/RL-Gym%20Environment-green.svg" /> <img src="https://img.shields.io/badge/Status-Active-success" /> </p>
-🐋 Overview
+The **Nerites Underwater Simulator** is a ROS 2 Foxy–based simulation framework for Autonomous Underwater Vehicles (AUVs), Remotely Operated Vehicles (ROVs), underwater manipulators, and reinforcement learning environments.  
 
-Nerites Underwater Simulator is a complete ROS 2 Foxy–based simulation ecosystem for underwater robotics research, supporting AUVs, ROVs, manipulators, GPU sonar, camera sensors, and reinforcement learning environments.
+It extends the UUV Simulator ecosystem with new vehicles, controllers, sonar models, and training tools, enabling:
 
-Built on top of the UUV Simulator framework and extended with custom vehicle models and controllers, Nerites provides everything needed for:
+* Autonomous underwater robotics research  
+* Control and thrust allocation testing  
+* Manipulation tasks using Oberon4/Oberon7  
+* Reinforcement learning in realistic ocean environments  
+* Multi-vehicle simulation  
 
-⚓ Autonomous underwater robotics
+<p align="center">
+  <img width="600" src="images/nerites_intro.png">
+</p>
 
-🤖 Control & thrust allocation research
+---
 
-🧠 Reinforcement learning for underwater vehicles
+## Features
 
-🛠 Manipulation tasks with Oberon4 & Oberon7 arms
+### Underwater Worlds
 
-🌍 Simulation in realistic ocean and testbed environments
+Nerites includes all underwater environments from the UUV Simulator:
 
-🚀 Key Features
-🌍 Underwater Worlds
+* Ocean worlds  
+* Pool/tank environments  
+* Hydrodynamic & buoyancy models  
+* Current, turbidity and noise plugins  
+* Structured testing environments  
 
-Includes all environments from UUV Simulator:
+---
 
-Ocean environments
+### Supported Vehicles
 
-Pool/tank worlds
+| Vehicle | Description |
+|--------|-------------|
+| RexROV | Robust ROV with full thruster configuration |
+| RexROV + Oberon4 | ROV with 4-DOF manipulator |
+| RexROV + Oberon7 | ROV with 7-DOF manipulator |
+| ECA A9 AUV | Torpedo-style autonomous underwater vehicle |
+| X300 AUV/ROV | Lightweight, configurable research vehicle |
 
-Structured testbeds
+<p align="center">
+  <img width="650" src="images/vehicles.png">
+</p>
 
-Hydrodynamic & buoyancy plugins
+All vehicles include hydrodynamic models, sensor suites, ROS 2 interfaces and launch files.
 
-Current, turbidity & noise models
+---
 
-🤖 Supported Vehicles
-Vehicle  Description
-RexROV   Heavy-duty ROV with full thruster model
-RexROV + Oberon4  ROV + 4-DOF manipulator
-RexROV + Oberon7  ROV + 7-DOF high-precision arm
-ECA A9 AUV  Torpedo-style autonomous underwater vehicle
-X300 AUV/ROV   Lightweight, configurable research vehicle
+### Controllers
 
-All vehicles include:
+Nerites provides:
 
-Hydrodynamics
+* NED controller  
+* Non-NED controller  
+* Velocity, heading and depth controllers  
+* Station-keeping controllers  
+* Thrust allocation for multi-thruster vehicles  
 
-Thruster models
+---
 
-Sensors
+### Sensor Suite
 
-ROS 2 interfaces
+* RGB camera  
+* GPU sonar (`gpu_ray` sensor)  
+* IMU  
+* Depth/pressure sensor  
+* DVL emulation  
+* ROS 2 LaserScan & CameraInfo publishers  
 
-Launch configurations
+<p align="center">
+  <img width="650" src="images/sensor_suite.png">
+</p>
 
-🎛️ Controllers
+---
 
-Nerites includes modular ROS 2 controllers:
+### Reinforcement Learning Environment
 
-NED controller
+Nerites provides a Gym-style RL interface supporting:
 
-Non-NED controller
+* reset() / step() API  
+* Domain randomization (currents, noise, visibility)  
+* Hovering tasks  
+* Waypoint following tasks  
+* Multi-vehicle training  
 
-Velocity, depth, heading controllers
+---
 
-Station keeping
+## Requirements
 
-Control allocator for multi-thruster vehicles
+This project requires:
 
-🎥 Sensor Suite
+* ROS 2 Foxy  
+* Gazebo Classic 11  
+* Python ≥ 3.8  
+* Colcon build tools  
 
-RGB camera
+---
 
-GPU sonar (gpu_ray sensor)
+## Installation and Running
 
-IMU (Accel + Gyro)
+### Installation
 
-Depth sensor
+#### Clone the workspace
+```
+git clone <your-repo-url> ~/nerites_sim_ws
+cd ~/nerites_sim_ws/src
+```
 
-DVL emulation
+#### Install dependencies  
+```
+rosdep update
+rosdep install --from-paths . --ignore-src -y
+```
 
-Noisy underwater dynamics
+#### Build  
+```
+cd ~/nerites_sim_ws
+colcon build --symlink-install
+source install/setup.bash
+```
 
-ROS 2 Camera Info & LaserScan publishers
+---
 
-🧠 Gym Environment for Reinforcement Learning
+### Running the Simulator
 
-A built-in RL environment compatible with:
+#### Launch an underwater world
+```
+ros2 launch uuv_gazebo_worlds ocean_world.launch.py
+```
 
-Stable Baselines
+#### Spawn RexROV
+```
+ros2 launch rexrov_sim bringup.launch.py
+```
 
-RLlib
+#### Spawn RexROV with Oberon7 arm
+```
+ros2 launch rexrov_sim bringup.launch.py use_arm:=oberon7
+```
 
-CleanRL
+#### Launch the ECA A9
+```
+ros2 launch eca_a9_nerites start_eca_a9.launch.py
+```
 
-Custom PyTorch policies
+#### Spawn X300
+```
+ros2 launch x300_description spawn_x300.launch.py
+```
 
-Features:
+---
 
-reset() / step() Gym API
+## Usage
 
-Randomized underwater conditions
+### View camera output
+```
+rqt_image_view /eca_a9/camera/image
+```
 
-Task variations (hovering, waypoint following, depth keeping)
+### View sonar output
+```
+rviz2 -d sonar_visualization.rviz
+```
 
-Multi-vehicle support
+---
 
-📦 Repository Structure
+## Reinforcement Learning Example
+
+```
+import gym
+import nerites_gym
+
+env = gym.make("NeritesAUVEnv-v0")
+obs = env.reset()
+
+for step in range(1000):
+    action = policy(obs)
+    obs, reward, done, info = env.step(action)
+    if done:
+        obs = env.reset()
+```
+
+<p align="center">
+  <img width="650" src="images/rl_training.png">
+</p>
+
+---
+
+## Repository Structure
+
+```
 nerites_sim_ws/
 └── src/
     ├── Nerites/
@@ -126,107 +212,45 @@ nerites_sim_ws/
     ├── x300_description/
     ├── kdl_parser_py/
     └── ...
+```
 
-🔧 Installation
-1️⃣ Install ROS 2 Foxy
+---
 
-https://docs.ros.org/en/foxy/Installation.html
+## Contributing
 
-2️⃣ Install Gazebo Classic
-sudo apt install gazebo11 ros-foxy-gazebo-*
+Contributions are welcome.  
+You may help with:
 
-3️⃣ Clone the Simulator Workspace
-git clone <your-repo-url> ~/nerites_sim_ws
-cd ~/nerites_sim_ws/src
-
-4️⃣ Install dependencies
-rosdep update
-rosdep install --from-paths . --ignore-src -y
-
-5️⃣ Build
-cd ~/nerites_sim_ws
-colcon build --symlink-install
-source install/setup.bash
-
-▶️ Launching the Simulation
-🌍 Start a world
-ros2 launch uuv_gazebo_worlds ocean_world.launch.py
-
-🤖 Spawn RexROV
-ros2 launch rexrov_sim bringup.launch.py
-
-🤖 Spawn RexROV + Oberon7 arm
-ros2 launch rexrov_sim bringup.launch.py use_arm:=oberon7
-
-🚀 Launch the ECA A9
-ros2 launch eca_a9_nerites start_eca_a9.launch.py
-
-🐋 Launch the X300
-ros2 launch x300_description spawn_x300.launch.py
-
-📡 Viewing Sensors
-Camera
-rqt_image_view /eca_a9/camera/image
-
-Sonar
-rviz2 -d sonar_visualization.rviz
-
-🧠 Reinforcement Learning Example
-import gym
-import nerites_gym
-
-env = gym.make("NeritesAUVEnv-v0")
-obs = env.reset()
-
-for step in range(1000):
-    action = policy(obs)
-    obs, reward, done, info = env.step(action)
-    if done:
-        obs = env.reset()
-
-🛠 Contributing
-
-Contributions are welcome!
-Areas where help is appreciated:
-
-New vehicle models
-
-Improved sonar simulation
-
-Underwater manipulation
-
-Reinforcement learning tasks
-
-Documentation & tutorials
+* New vehicle models  
+* Improved sonar simulation  
+* Manipulation extensions  
+* RL tasks and benchmarks  
+* Documentation and tutorials  
 
 Fork → Branch → Pull Request.
 
-📄 License
+---
 
-This project is licensed under Apache 2.0 (or your license of choice).
+## Cite as
 
-📢 Citation
+```
 @misc{nerites2025,
   title  = {Nerites Underwater Simulator},
-  author = {Alice S., Contributors},
+  author = {Alice S. and Contributors},
   year   = {2025},
   url    = {https://github.com/<your-repo>}
 }
+```
 
-🌊 Dive In
+---
 
-Nerites provides a powerful, flexible simulation platform for underwater robotics, research, AI, and RL.
+# Final Note
 
-Whether you're developing:
+Nerites provides a robust, flexible simulation framework for:
 
-AUV autonomy
+* AUV autonomy  
+* ROV manipulation  
+* Underwater control systems  
+* Reinforcement learning research  
 
-ROV manipulation
-
-Thruster allocation
-
-Neural controllers
-
-RL policies
-
-Nerites gives you the ocean — go explore it.
+**Nerites gives you the ocean — now go explore it.**
