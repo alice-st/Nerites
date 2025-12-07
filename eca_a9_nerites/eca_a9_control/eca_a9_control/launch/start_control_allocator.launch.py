@@ -7,7 +7,6 @@ from ament_index_python.packages import get_package_share_directory
 def launch_setup(context, *args, **kwargs):
     actions = []
 
-    # Build path using Foxy style
     output_dir_path = os.path.join(get_package_share_directory('eca_a9_control'), 'config')
 
     actions.append(

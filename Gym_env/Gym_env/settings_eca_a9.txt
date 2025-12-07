@@ -1,0 +1,46 @@
+# SAC parameters
+scenario_name = eca_a9_agent
+number_of_episodes = 300
+max_steps = 100
+test_episodes = 10
+test_max_steps = 100
+buffer_size = 1_000_000
+batch_size = 256
+gamma = 0.99
+tau = 0.005
+alpha = 0.2
+lr = 1e-3
+lr = 1e-4
+
+# Careful! if rew_clip and obs_clip are too small, their are shrinking the actual rewards and observations
+obs_clip = 100.0
+rew_clip = 1000.0
+
+# Base environment parameters
+WORLD_LAUNCH = "/home/alice/nerites_sim_ws/install/uuv_gazebo_worlds/share/uuv_gazebo_worlds/launch/empty_underwater_world.launch.py"
+MODEL_LAUNCH = "/home/alice/nerites_sim_ws/install/eca_a9_description/share/eca_a9_description/launch/upload_eca_a9_default.launch.py"
+WAYPOINTS_FILE_PATH = "/home/alice/nerites_sim_ws/src/Gym_env/waypoints.yaml"
+TARGET_SDF = "/home/alice/nerites_sim_ws/src/x300_description/models/target/model.sdf"
+POSE_TOPIC = "/pose_gt"
+
+THRUSTER_TOPIC_FMT = "/thrusters/id_{}/input"
+FIN_TOPIC_FMT = "/fins/id_{}/input"
+
+# ***********************************************************
+# if you are running inference turn this to False
+evaluation_mode = False
+# ***********************************************************
+
+evaluation_file = surge_pairs.json
+headless = False
+render_mode = human
+uuv_name = "eca_a9"
+num_thrusters = 1
+num_fins = 4
+number_of_target_waypoints = 2
+thruster_boost = 100.0
+control_period = 0.2
+
+# Nerites environments 
+kept_target_for_steps = 10
+tolerance = 0.2 # degrees for yaw a pitch, meters for surge

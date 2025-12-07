@@ -9,7 +9,6 @@ from launch.actions import DeclareLaunchArgument, GroupAction
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    # Declare launch arguments
     declare_args = [
         DeclareLaunchArgument('uuv_name', default_value='eca_a9'),
         DeclareLaunchArgument('gui_on', default_value='true'),
@@ -118,7 +117,6 @@ def generate_launch_description():
         )
 
 
-    # Grouping actions
     uuv_group = GroupAction(
         actions=[
             PushRosNamespace(namespace=LaunchConfiguration('uuv_name')),
@@ -128,7 +126,6 @@ def generate_launch_description():
     )
 
 
-    # Group for RViz if GUI is enabled
     gui_group = GroupAction([
         Node(
             package='rviz2',

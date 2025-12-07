@@ -63,7 +63,6 @@ def launch_setup(context, *args, **kwargs):
 
     if not pathlib.Path(path).exists():
         try:
-            # Create directory if required and sub-directory
             os.makedirs(path)
         except OSError:
             print("Creation of the directory %s failed" % path)
@@ -86,14 +85,10 @@ def launch_setup(context, *args, **kwargs):
         with open(output, 'w') as file_out:
             file_out.write(doc)
 
-    # URDF spawner
     args = ('-gazebo_namespace /gazebo '
             '-x %s -y %s -z %s -R %s -P %s -Y %s -entity %s -topic robot_description' 
             % (x, y, z, roll, pitch, yaw, namespace)).split()
 
-    # Urdf spawner. NB: node namespace does not prefix the spawning service, 
-    # as using a leading /
-    # NB 2: node namespace prefixes the robot_description topic
     urdf_spawner = Node(
         name='urdf_spawner',
         package='gazebo_ros',
@@ -112,7 +107,6 @@ def launch_setup(context, *args, **kwargs):
         parameters=[{'use_sim_time': res}, {'robot_description': doc}]
     )
 
-    # Message to tf
     message_to_tf_launch = os.path.join(
         get_package_share_directory('uuv_assistants'),
         'launch',
@@ -129,7 +123,6 @@ def launch_setup(context, *args, **kwargs):
     message_to_tf_launch = IncludeLaunchDescription(
         AnyLaunchDescriptionSource(message_to_tf_launch), launch_arguments=launch_args)
 
-    # Static transform publisher to connect world to eca_a9/base_link
     static_transform = Node(
         package='tf2_ros',
         executable='static_transform_publisher',

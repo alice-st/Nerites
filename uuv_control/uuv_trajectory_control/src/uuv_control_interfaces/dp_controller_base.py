@@ -1,6 +1,5 @@
 # Copyright (c) 2025 The Nerites Authors.
 # All rights reserved.
-
 # Copyright (c) 2020 The Plankton Authors.
 # All rights reserved.
 #
@@ -351,7 +350,7 @@ class DPControllerBase(Node):
             self._reference['rot'] = reference.q
             self._reference['vel'] = np.hstack((reference.v, reference.w))
             self._reference['acc'] = np.hstack((reference.a, reference.alpha))
-            
+
         if reference is not None and self._reference_pub.get_subscription_count() > 0:
             # Publish current reference
             msg = TrajectoryPoint()

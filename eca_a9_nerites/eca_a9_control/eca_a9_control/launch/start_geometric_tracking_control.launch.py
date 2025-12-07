@@ -170,7 +170,6 @@ def generate_launch_description():
         ]
     )
 
-    # Grouping actions
     controller_group = GroupAction(
         actions=[
             PushRosNamespace(namespace=LaunchConfiguration('uuv_name')),

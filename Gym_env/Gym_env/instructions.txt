@@ -1,0 +1,6 @@
+1. Choose your vehicle eca_a9/rexrov/x300
+2. In the base_env.py and my_sac_train.py modify the settings path to reflect your vehicle choise
+3. in the settings_your_vehicle.txt modify the parameters to your desired configuration
+4. run python3 custom_algorithms/my_sac_train.py
+
+Happy training!

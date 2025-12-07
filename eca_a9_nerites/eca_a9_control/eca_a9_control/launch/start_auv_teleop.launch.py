@@ -54,10 +54,8 @@ def launch_setup(context, *args, **kwargs):
 
 def generate_launch_description():
     return LaunchDescription([
-        # Declare launch arguments (like <let> in XML)
         DeclareLaunchArgument('uuv_name', default_value='eca_a9'),
         DeclareLaunchArgument('joy_id', default_value='0'),
 
-        # Use OpaqueFunction for setup logic
         OpaqueFunction(function=launch_setup)
     ])
