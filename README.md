@@ -1,8 +1,8 @@
-# Nerites Underwater Simulator (ROS 2 Foxy)
+# Nerites Underwater Simulator
 
 ## Motivation
 
-The **Nerites Underwater Simulator** is a **complete ROS 2 Foxy port and extension of the original UUV Simulator framework**.
+The **Nerites Underwater Simulator** is a **complete ROS 2 Foxy port and extension of the original UUV Simulator framework (https://github.com/uuvsimulator/uuv_simulator)**.
 
 It focuses on:
 
@@ -14,10 +14,10 @@ It focuses on:
 
 Nerites currently includes the following vehicles:
 
-- **RexROV**  
-- **ECA A9**  
-- **GRAALTech X300**  
-- **Oberon4** and **Oberon7** manipulators  
+- **RexROV**  (https://www.researchgate.net/figure/RexRov-vehicle-in-simulation_fig1_367514536)
+- **ECA A9** (https://uuvsimulator.github.io/packages/eca_a9/docs/packages/eca_a9_description/)
+- **Twin GRAALTech X300** (https://www.graaltech.com/products/x-300-auv/)
+- **Oberon4** and **Oberon7** manipulators  (https://github.com/uuvsimulator/uuv_manipulators)
 - A **Gym-compatible RL framework** with **Soft Actor-Critic (SAC)** control training pipelines for:
   - RexROV  
   - ECA A9  
@@ -110,28 +110,9 @@ This supports:
 - Vertical profiling  
 - Low-speed precision maneuvering  
 
-### Sensors (Simulated)
-
-- RGB camera  
-- GPU sonar (`gpu_ray`)  
-- IMU  
-- Depth / pressure sensor  
-- DVL-like velocity estimation  
-- Ground-truth odometry (for RL and evaluation)  
-- Optional LaserScan and CameraInfo  
-
 ---
 
 ## Controllers
-
-Nerites provides a variety of ROS 2 controllers:
-
-- NED and non-NED controllers  
-- Velocity, heading, depth and altitude control  
-- Station-keeping controllers  
-- Thruster allocation for multi-thruster vehicles  
-- Manipulator joint and gripper controllers  
-- Joystick teleoperation for vehicles and arms  
 
 ### RexROV Trajectory Controllers (Verified)
 
@@ -139,42 +120,63 @@ The following **trajectory controllers for RexROV** are fully working in the ROS
 
 1. **Launch a Gazebo world**
 
-```bash
+```
 ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
+```
 
-    Launch RexROV
+Launch RexROV
 
+```
 ros2 launch uuv_descriptions upload_rexrov_default.launch.py
+```
 
-    Run one of the controllers
+## Run one of the controllers
 
 # Classic PID controller
+```
 ros2 launch uuv_trajectory_control rov_pid_controller.launch.py uuv_name:=rexrov
+```
 
 # Model-based finite-time Lyapunov controller
+```
 ros2 launch uuv_trajectory_control rov_mb_fl_controller.launch.py uuv_name:=rexrov
+```
 
 # Model-based sliding mode controller
+```
 ros2 launch uuv_trajectory_control rov_mb_sm_controller.launch.py uuv_name:=rexrov
+```
 
 # Nonlinear PID controller
+```
 ros2 launch uuv_trajectory_control rov_nl_pid_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+```
 
 # PD + gravity compensation controller
+```
 ros2 launch uuv_trajectory_control rov_pd_grav_compensation_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+```
 
 # Sliding mode + feedforward (SF) controller
+```
 ros2 launch uuv_trajectory_control rov_sf_controller.launch.py uuv_name:=rexrov
+```
 
 # Underactuated AUV PID controller (UA-PID)
+```
 ros2 launch uuv_trajectory_control rov_ua_pid_controller.launch.py uuv_name:=rexrov
+```
 
 # Non-model-based sliding mode controller
+```
 ros2 launch uuv_trajectory_control rov_nmb_sm_controller.launch.py uuv_name:=rexrov model_name:=rexrov
+```
 
-    Send a waypoint file
+## Send a waypoint file
 
+```
 ros2 launch uuv_control_utils send_waypoints_file.launch.py uuv_name:=rexrov
+```
 
 This pipeline gives you: world → vehicle → controller → waypoint tracking.
 Disturbance & Thruster Tutorials
@@ -182,66 +184,56 @@ Disturbance & Thruster Tutorials
 The following tutorial launch files are fully working and useful for testing disturbances, thruster behavior and robustness:
 
 # Disturbance manager tutorial
+```
 ros2 launch uuv_tutorial_disturbances tutorial_disturbance_manager.launch.py
+```
 
 # Body wrench (external forces/torques)
+```
 ros2 launch uuv_tutorial_disturbances tutorial_body_wrench.launch.py
+```
 
 # Thruster efficiency changes
+```
 ros2 launch uuv_tutorial_disturbances tutorial_thruster_efficiency.launch.py
+```
 
 # Thruster state visualization/monitoring
+```
 ros2 launch uuv_tutorial_disturbances tutorial_thruster_state.launch.py
+```
 
 # Time-varying current fields
+```
 ros2 launch uuv_tutorial_disturbances tutorial_timed_current.launch.py
+```
 
 These are perfect to combine with the RexROV controllers for robustness and RL training scenarios.
-Reinforcement Learning Environment
+
+## Reinforcement Learning Environment
 
 Nerites provides a Gym-style RL interface adapted to underwater vehicles.
-Core Environment
+Core Environment:
 
-    base_uuv_env.py: base environment for AUV/ROV control
+Base_env.py: Base environment for AUV/ROV control
 
-        reset() / step() API
-
-        Continuous action spaces (thrusters, fins, etc.)
-
-        Rich observation spaces (pose, velocities, sensors)
-
-        Domain randomization (currents, noise, disturbances)
+* reset() / step() API
+* Continuous action spaces (thrusters, fins, etc.)
+* Rich observation spaces (pose, velocities, sensors)
 
 RL Support Per Vehicle
 
-    RexROV → rexrov_env.py
-
-    ECA A9 → eca_a9_env.py
-
-    X300 → x300_env.py
+* RexROV → rexrov_env.py
+* ECA A9 → eca_a9_env.py
+* X300 → x300_env.py
 
 All three are trained using Soft Actor-Critic (SAC) via a custom training script.
-How to Train SAC (RexROV / ECA A9 / X300)
 
-    Choose your vehicle
+# How to Train SAC (RexROV / ECA A9 / X300)
 
-    Pick one of:
-
-        eca_a9
-
-        rexrov
-
-        x300
-
-    Point the environment and trainer to the right settings file
-
-    In:
-
-        base_uuv_env.py
-
-        custom_algorithms/my_sac_train.py
-
-    update the settings path so it points to the configuration file for your chosen vehicle, e.g.:
+* Choose your vehicle: eca_a9, rexrov or x300
+* Point the environment and trainer to the right settings file:
+In base_uuv_env.py and custom_algorithms/my_sac_train.py update the settings path so it points to the configuration file for your chosen vehicle, e.g.:
 
 SETTINGS_PATH = "settings/settings_rexrov.txt"
 # or
@@ -249,68 +241,46 @@ SETTINGS_PATH = "settings/settings_eca_a9.txt"
 # or
 SETTINGS_PATH = "settings/settings_x300.txt"
 
-Edit the settings file for your vehicle
+* Edit the settings file for your vehicle
 
 Open the matching settings_<vehicle>.txt file, for example:
 
-    settings_rexrov.txt
-
-    settings_eca_a9.txt
-
-    settings_x300.txt
+* settings_rexrov.txt
+* settings_eca_a9.txt
+* settings_x300.txt
 
 and adjust parameters such as:
 
-    Episode length
-
-    Reward weights
-
-    Observation and action scaling
-
-    SAC hyperparameters (learning rates, γ, τ, etc.)
+* Episode length
+* Number of steps per episode
+* Observation and action scaling
+* SAC hyperparameters (learning rates, γ, τ, etc.)
 
 Run training
 
 From the RL package directory (e.g. nerites_gym or your RL project root):
 
-    python3 custom_algorithms/my_sac_train.py
+python3 custom_algorithms/my_sac_train.py
 
-    This will:
+This will:
 
-        Instantiate the chosen vehicle environment (RexROV / ECA A9 / X300)
+* Instantiate the chosen vehicle environment (RexROV / ECA A9 / X300)
 
-        Load parameters from settings_<vehicle>.txt
+* Load parameters from settings_<vehicle>.txt
 
-        Train a SAC policy using the custom training loop
-
-Minimal RL Example (Using Gym Interface)
-
-import gym
-import nerites_gym
-
-env = gym.make("NeritesAUVEnv-v0")
-obs = env.reset()
-
-for step in range(1000):
-    action = policy(obs)  # your SAC policy here
-    obs, reward, done, info = env.step(action)
-    if done:
-        obs = env.reset()
+* Train a SAC policy using the custom training loop
 
 <p align="center"> <img width="650" src="images/rl_training.png"> </p>
 Requirements
 
 This project requires:
 
-    ROS 2 Foxy
+* ROS 2 Foxy
+* Gazebo Classic 11
+* Python ≥ 3.8
+* Colcon build tools
 
-    Gazebo Classic 11
-
-    Python ≥ 3.8
-
-    Colcon build tools
-
-Installation
+# Installation
 Clone the workspace
 
 git clone <your-repo-url> ~/nerites_sim_ws
@@ -380,15 +350,11 @@ Contributing
 
 Contributions are welcome. You can help with:
 
-    New vehicle models
-
-    Improved sonar / sensor simulation
-
-    Manipulation and dual-arm coordination
-
-    New RL tasks and benchmarks
-
-    Documentation and tutorials
+* New vehicle models
+* Improved sonar / sensor simulation
+* Manipulation and dual-arm coordination
+* New RL tasks and benchmarks
+* Documentation and tutorials
 
 Workflow: Fork → Branch → Pull Request.
 Cite as
@@ -404,13 +370,10 @@ Final Note
 
 Nerites is a research-grade ROS 2 Foxy port of the UUV Simulator ecosystem, extended with:
 
-    Realistic AUV/ROV vehicle models
-
-    Underwater manipulator support
-
-    Gym-compatible RL environments
-
-    SAC-based training for RexROV, ECA A9 and X300
+* Realistic AUV/ROV vehicle models
+* Underwater manipulator support
+* Gym-compatible RL environments
+* SAC-based training for RexROV, ECA A9 and X300
 
 You bring the ideas. Nerites gives you the ocean. 🌊🤖
 
