@@ -23,10 +23,10 @@ The project focuses on:
 
 ## Included Vehicles
 
--   RexROV -- Work-class ROV\
--   ECA A9 -- Torpedo-style AUV\
--   GRAALTech X300 -- Hybrid AUV/ROV\
--   Oberon4 and Oberon7 manipulators\
+-   RexROV -- Work-class ROV
+-   ECA A9 -- Torpedo-style AUV
+-   GRAALTech X300 -- Hybrid AUV/ROV
+-   Oberon4 and Oberon7 manipulators
 -   Gym-compatible RL framework with Soft Actor--Critic (SAC) training
     pipelines
 
@@ -39,43 +39,45 @@ The project focuses on:
 Nerites ports and extends the original UUV Simulator environments to ROS
 2:
 
--   Ocean environments\
--   Pool and tank setups\
--   Hydrodynamic and buoyancy models\
--   Current, turbidity, and noise plugins\
+-   Ocean environments
+-   Pool and tank setups
+-   Hydrodynamic and buoyancy models
+-   Current, turbidity, and noise plugins
 -   Structured benchmarking environments
 
 ------------------------------------------------------------------------
 
 ### Supported Vehicle Configurations
 
-  -----------------------------------------------------------------------
-  Vehicle                     Description
-  --------------------------- -------------------------------------------
-  RexROV                      Work-class ROV with full thruster
-                              configuration
+-----------------------------------------------------------------------
 
-  ECA A9 AUV                  Torpedo-style autonomous underwater vehicle
+Vehicle                     Description
+-----------------------------------------------------------------------
+RexROV                      Work-class ROV with full thruster
+                            configuration
 
-  GRAALTech X300              Hybrid AUV/ROV with hovering and profiling
-                              capability
+ECA A9 AUV                  Torpedo-style autonomous underwater vehicle
 
-  RexROV + Oberon4            ROV with 4-DOF manipulator
+GRAALTech X300              Hybrid AUV/ROV with hovering and profiling
+                            capability
 
-  RexROV + Oberon7            ROV with 7-DOF serial arm
+RexROV + Oberon4            ROV with 4-DOF manipulator
 
-  RexROV + Dual Arms          ROV with both Oberon4 and Oberon7
-  -----------------------------------------------------------------------
-  
-  <p align="center">
-    <img src="images/rexrov.png" width="200" height="200">
-    <img src="images/eca_a9.png" width="200" height="200">
-    <img src="images/x300.png" width="200" height="200">
-    <img src="images/oberon4.png" width="200" height="200">
-    <img src="images/oberon7.png" width="200" height="200">
-    <img src="images/arms.png" width="200" height="200">
-  </p>
-  ------------------------------------------------------------------------
+RexROV + Oberon7            ROV with 7-DOF serial arm
+
+RexROV + Dual Arms          ROV with both Oberon4 and Oberon7
+-----------------------------------------------------------------------
+
+<p align="center">
+  <img src="images/rexrov.png" width="200" height="200">
+  <img src="images/eca_a9.png" width="200" height="200">
+  <img src="images/x300.png" width="200" height="200">
+  <img src="images/oberon4.png" width="200" height="200">
+  <img src="images/oberon7.png" width="200" height="200">
+  <img src="images/arms.png" width="200" height="200">
+</p>
+
+------------------------------------------------------------------------
 
 ## Manipulators: Oberon4 and Oberon7
 
@@ -100,21 +102,21 @@ Nerites ports and extends the original UUV Simulator environments to ROS
 The GRAALTech X300 is a compact torpedo-shaped hybrid AUV/ROV designed
 for:
 
--   Long-range autonomous navigation\
--   Precision hovering and station-keeping\
+-   Long-range autonomous navigation
+-   Precision hovering and station-keeping
 -   Environmental monitoring and inspection
 
 In Nerites, X300 is fully modeled in ROS 2 with:
 
--   Thruster allocation\
--   Hydrodynamic modeling\
--   Sensor integration\
+-   Thruster allocation
+-   Hydrodynamic modeling
+-   Sensor integration
 -   A dedicated SAC RL training environment (x300_env.py)
 
 ### Simulated Actuation
 
--   Two rear main thrusters for surge\
--   Four vertical tunnel thrusters for heave\
+-   Two rear main thrusters for surge
+-   Four vertical tunnel thrusters for heave
 -   Four horizontal tunnel thrusters for yaw and lateral motion
 
 ------------------------------------------------------------------------
@@ -198,9 +200,9 @@ SETTINGS_PATH = "settings/settings_x300.txt"
 
 3.  Configure:
 
--   Episode length\
--   Steps per episode\
--   Observation and action scaling\
+-   Episode length
+-   Steps per episode
+-   Observation and action scaling
 -   SAC hyperparameters
 
 4.  Run training:
@@ -238,17 +240,6 @@ source install/setup.bash
 
 ------------------------------------------------------------------------
 
-## Repository Structure
-
-nerites_sim_ws/ └── src/ ├── Nerites/ │ ├── uuv_simulator │ ├──
-uuv_descriptions │ ├── uuv_gazebo │ ├── uuv_gazebo_worlds │ ├──
-uuv_sensor_plugins │ ├── uuv_world_plugins │ ├── uuv_control │ ├──
-uuv_assistants │ ├── uuv_teleop │ ├── nerites_gym │ └── nerites_utils
-├── eca_a9_nerites/ ├── x300_description/ ├── oberon4_control/ ├──
-oberon7_control/ ├── kdl_parser_py/
-
-------------------------------------------------------------------------
-
 ## Contributing
 
 Contributions are welcome in:
@@ -267,9 +258,9 @@ To be announced.
 
 ------------------------------------------------------------------------
 
-## Final Note
+## Parent Repositories
 
-Nerites is a research-grade ROS 2 Foxy underwater robotics simulation
-framework integrating realistic hydrodynamic vehicle models, underwater
-manipulation, Gym-compatible reinforcement learning environments, and
-Soft Actor--Critic control for full six-degree-of-freedom motion.
+* UUV Simulator: (https://github.com/uuvsimulator/uuv_simulator)
+* Plankton Simulator: (https://github.com/Liquid-ai/Plankton)
+* Eca A9 vehicle: (https://github.com/GSO-soslab/eca_a9_plankton)
+* UUV manipulators: (https://github.com/uuvsimulator/uuv_manipulators)
