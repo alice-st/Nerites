@@ -51,22 +51,37 @@ Nerites ports and extends the original UUV Simulator environments to ROS
 
 -----------------------------------------------------------------------
 
-Vehicle                     Description
------------------------------------------------------------------------
-RexROV                      Work-class ROV with full thruster
-                            configuration
+<table>
+  <tr>
+    <th>Vehicle</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>RexROV</b></td>
+    <td>Work-class ROV with full thruster configuration</td>
+  </tr>
+  <tr>
+    <td><b>ECA A9 AUV</b></td>
+    <td>Torpedo-style autonomous underwater vehicle</td>
+  </tr>
+  <tr>
+    <td><b>GRAALTech X300</b></td>
+    <td>Hybrid AUV/ROV with hovering and profiling capability</td>
+  </tr>
+  <tr>
+    <td><b>RexROV + Oberon4</b></td>
+    <td>ROV with 4-DOF manipulator</td>
+  </tr>
+  <tr>
+    <td><b>RexROV + Oberon7</b></td>
+    <td>ROV with 7-DOF serial arm</td>
+  </tr>
+  <tr>
+    <td><b>RexROV + Dual Arms</b></td>
+    <td>ROV with both Oberon4 and Oberon7</td>
+  </tr>
+</table>
 
-ECA A9 AUV                  Torpedo-style autonomous underwater vehicle
-
-GRAALTech X300              Hybrid AUV/ROV with hovering and profiling
-                            capability
-
-RexROV + Oberon4            ROV with 4-DOF manipulator
-
-RexROV + Oberon7            ROV with 7-DOF serial arm
-
-RexROV + Dual Arms          ROV with both Oberon4 and Oberon7
------------------------------------------------------------------------
 
 <p align="center">
   <img src="images/rexrov.png" width="200" height="200">
