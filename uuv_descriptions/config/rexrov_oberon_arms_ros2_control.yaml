@@ -1,0 +1,32 @@
+# uuv_descriptions/config/rexrov_oberon_arms_ros2_control.yaml
+controller_manager:
+  ros__parameters:
+    update_rate: 50
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    oberon4_arm_controller:
+      type: position_controllers/JointGroupPositionController
+
+    oberon7_arm_controller:
+      type: position_controllers/JointGroupPositionController
+
+oberon4_arm_controller:
+  ros__parameters:
+    joints:
+      - oberon4/azimuth
+      - oberon4/shoulder
+      - oberon4/wrist_joint
+      - oberon4/jaw_1_joint
+      - oberon4/jaw_2_joint
+
+oberon7_arm_controller:
+  ros__parameters:
+    joints:
+      - oberon7/azimuth
+      - oberon7/shoulder
+      - oberon7/elbow
+      - oberon7/roll
+      - oberon7/pitch
+      - oberon7/wrist

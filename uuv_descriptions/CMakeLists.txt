@@ -7,7 +7,7 @@ find_package(ament_cmake REQUIRED)
 # install(PROGRAMS scripts/spawn_model
 #   DESTINATION lib/${PROJECT_NAME})
 
-install(DIRECTORY launch meshes robots urdf
+install(DIRECTORY launch meshes robots urdf config
   DESTINATION share/${PROJECT_NAME}
   PATTERN "*~"
   EXCLUDE)

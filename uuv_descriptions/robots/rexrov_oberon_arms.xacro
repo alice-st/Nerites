@@ -26,24 +26,27 @@
   <xacro:arg name="debug" default="0"/>
   <xacro:arg name="namespace" default="rexrov"/>
   <xacro:arg name="inertial_reference_frame" default="world"/>
-  <!-- Include the ROV macro file -->
+
+  <!-- ROV base -->
   <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov.gazebo.xacro"/>
+
+  <!-- Arms -->
   <xacro:include filename="$(find oberon4_description)/robots/oberon4_default.xacro" />
   <xacro:include filename="$(find oberon7_description)/robots/oberon7_default.xacro" />
 
-  <!-- Create the ROV -->
+  <!-- Create the ROV with hydro models for both arms -->
   <xacro:rexrov_base
     namespace="$(arg namespace)"
     inertial_reference_frame="$(arg inertial_reference_frame)">
     <!-- The underwater object plugin is given as an input block parameter to
-     allow the addition of external models of manipulator units -->
+         allow the addition of external models of manipulator units -->
     <gazebo>
       <plugin name="$(arg namespace)_uuv_plugin" filename="libuuv_underwater_object_ros_plugin.so">
         <fluid_density>1028.0</fluid_density>
         <flow_velocity_topic>hydrodynamics/current_velocity</flow_velocity_topic>
         <debug>$(arg debug)</debug>
-        <!-- Adding the hydrodynamic and hydrostatic parameters for the vehicle-->
+        <!-- Hydrodynamic and hydrostatic parameters -->
         <xacro:rexrov_hydro_model namespace="$(arg namespace)"/>
         <xacro:oberon7_hydro_model namespace="oberon7"/>
         <xacro:oberon4_hydro_model namespace="oberon4"/>
@@ -51,19 +54,125 @@
     </gazebo>
   </xacro:rexrov_base>
 
+  <!-- Attach Oberon7 (right/left depends on your convention) -->
   <xacro:oberon7 namespace="oberon7" parent="$(arg namespace)/base_link">
     <origin xyz="1.3 -0.5 -0.615" rpy="0 0 0"/>
   </xacro:oberon7>
 
+  <!-- Attach Oberon4 -->
   <xacro:oberon4 namespace="oberon4" parent="$(arg namespace)/base_link">
     <origin xyz="1.3 0.5 -0.615" rpy="0 0 0"/>
   </xacro:oberon4>
 
+  <!-- ros2_control configuration for *both* arms in Gazebo -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <!-- Gazebo-side ros2_control system -->
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <!--
+      OBERON4 JOINTS
+      Must match:
+        * oberon4_default.xacro
+        * oberon4_ros2_control.yaml
+      Joints:
+        oberon4/azimuth
+        oberon4/shoulder
+        oberon4/wrist_joint
+        oberon4/jaw_1_joint
+        oberon4/jaw_2_joint
+    -->
+    <joint name="oberon4/azimuth">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon4/shoulder">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon4/wrist_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon4/jaw_1_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon4/jaw_2_joint">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <!--
+      OBERON7 JOINTS
+      Must match:
+        * oberon7_default.xacro (oberon7_serial_arm)
+        * oberon7_ros2_control.yaml
+      Joints:
+        oberon7/azimuth
+        oberon7/shoulder
+        oberon7/elbow
+        oberon7/roll
+        oberon7/pitch
+        oberon7/wrist
+    -->
+    <joint name="oberon7/azimuth">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/shoulder">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/elbow">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/roll">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/pitch">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/wrist">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Gazebo ros2_control plugin (ROS 2) -->
   <gazebo>
-      <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
-        <robotNamespace>/$(arg namespace)</robotNamespace>
-        <robotParam>/$(arg namespace)/robot_description</robotParam>
-      </plugin>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <!-- Namespace of the Gazebo ros2_control node -->
+      <robotNamespace>/$(arg namespace)</robotNamespace>
+      <!-- Parameter name that contains the URDF (set by robot_state_publisher) -->
+      <robotParam>/$(arg namespace)/robot_description</robotParam>
+      <!-- Combined controller config for both arms (you create this YAML) -->
+      <parameters>$(find uuv_descriptions)/config/rexrov_oberon_arms_ros2_control.yaml</parameters>
+    </plugin>
   </gazebo>
 
   <!-- Joint state publisher plugin -->

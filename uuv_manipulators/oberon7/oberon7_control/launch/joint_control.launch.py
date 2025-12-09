@@ -104,7 +104,6 @@ def generate_launch_description():
         'rexrov_oberon7.xacro'
     )
 
-    # This mirrors the Oberon4 pattern; unused args in xacro are just ignored.
     robot_description_cmd = Command([
         'xacro ', xacro_file,
         ' ', 'uuv_name:=', uuv_name,
@@ -250,7 +249,6 @@ def generate_launch_description():
 
     # -------------------------------------------------------------------------
     # (Optional) gripper_controller node for Oberon7 parallel gripper
-    # You can adapt this once you confirm the gripper joint/link names.
     # -------------------------------------------------------------------------
     # gripper_controller_node = Node(
     #     package='uuv_manipulators_control',
@@ -293,7 +291,7 @@ def generate_launch_description():
         PushRosNamespace(ns),
         kinematics_service_node,
         joint_position_controller_node,
-        # gripper_controller_node,  # enable once gripper params are correct
+        # gripper_controller_node,
     ])
 
     return LaunchDescription([

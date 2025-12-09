@@ -1,16 +1,26 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2025 The Nerites Authors.
 # All rights reserved.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, OpaqueFunction
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    GroupAction,
+    OpaqueFunction,
+)
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace, SetParameter
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
+
 from nerites_utils.time import is_sim_time
+
 import xacro
 import os
+
 
 def launch_setup(context, *args, **kwargs):
     # === Retrieve launch arguments ===
@@ -27,7 +37,7 @@ def launch_setup(context, *args, **kwargs):
     # Simulation time
     sim_time = is_sim_time(return_param=False, use_subprocess=True)
 
-    # Locate xacro file
+    # Locate xacro file (multi-arm rexrov + oberon4 + oberon7)
     xacro_file = os.path.join(
         get_package_share_directory('uuv_descriptions'),
         'robots',
@@ -43,14 +53,16 @@ def launch_setup(context, *args, **kwargs):
         'inertial_reference_frame': inertial_ref
     }
     doc = xacro.process(xacro_file, mappings=mappings)
-    
+
+    # NOTE: we spawn from the *global* /robot_description topic
     args = (
         f"-gazebo_namespace /gazebo "
         f"-x {x} -y {y} -z {z} "
         f"-R {roll} -P {pitch} -Y {yaw} "
-        f"-entity {namespace} -topic robot_description").split()
+        f"-entity {namespace} -topic /robot_description"
+    ).split()
 
-    # === Main namespace group ===
+    # === Namespace group: only Gazebo spawner lives under /<namespace> ===
     group_actions = GroupAction([
         PushRosNamespace(namespace),
 
@@ -62,30 +74,30 @@ def launch_setup(context, *args, **kwargs):
             output='screen',
             respawn=False,
             arguments=args,
-            parameters=[{'use_sim_time': sim_time}]
+            parameters=[{'use_sim_time': sim_time}],
         ),
-
-        # Robot state publisher (publishes TF tree)
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            respawn=True,
-            parameters=[
-                {'use_sim_time': sim_time},
-                {'robot_description': doc}
-            ]
-        )
     ])
 
-    # === Arm parameters ===
+    # === Global robot_state_publisher (NO PushRosNamespace) ===
+    rsp_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',  # exactly this name, global
+        output='screen',
+        respawn=True,
+        parameters=[
+            {'use_sim_time': sim_time},
+            {'robot_description': doc},
+        ],
+    )
+
+    # === Arm parameters for both manipulators ===
     arms_params = [
         SetParameter(name=f"{namespace}/arms/n_arms", value=2),
-        SetParameter(name=f"{namespace}/arms/names", value=['oberon7', 'oberon4'])
+        SetParameter(name=f"{namespace}/arms/names", value=['oberon7', 'oberon4']),
     ]
 
-    # === YAML configs for Oberon7 & Oberon4 ===
+    # === YAML configs for Oberon7 & Oberon4 (paths ready if needed) ===
     oberon7_config_path = os.path.join(
         FindPackageShare('oberon7_description').perform(context),
         'params', 'robot_config.yaml'
@@ -94,7 +106,8 @@ def launch_setup(context, *args, **kwargs):
         FindPackageShare('oberon4_description').perform(context),
         'params', 'robot_config.yaml'
     )
-    # NOTE: Attach these YAMLs to the right node using `parameters=[yaml_path]` or via `ros2 param load`.
+    # You can feed these into nodes via parameters=[oberon7_config_path, oberon4_config_path]
+    # if/when some node actually uses them.
 
     # === Include body_sname.launch (with use_sim_time) ===
     publish_body_sname = IncludeLaunchDescription(
@@ -107,8 +120,8 @@ def launch_setup(context, *args, **kwargs):
         ),
         launch_arguments={
             'uuv_name': namespace,
-            'use_sim_time': str(sim_time).lower()
-        }.items()
+            'use_sim_time': str(sim_time).lower(),
+        }.items(),
     )
 
     # === Include message_to_tf.launch ===
@@ -123,11 +136,13 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             'namespace': namespace,
             'world_frame': 'world',
-            'child_frame_id': f"/{namespace}/base_link"
-        }.items()
+            'child_frame_id': f"/{namespace}/base_link",
+        }.items(),
     )
 
-    return [group_actions, *arms_params, publish_body_sname, message_to_tf]
+    # Order doesn’t matter much, but this is nice and explicit
+    return [group_actions, rsp_node, *arms_params, publish_body_sname, message_to_tf]
+
 
 def generate_launch_description():
     return LaunchDescription([
@@ -141,5 +156,5 @@ def generate_launch_description():
         DeclareLaunchArgument('namespace', default_value='rexrov'),
         DeclareLaunchArgument('use_ned_frame', default_value='false'),
 
-        OpaqueFunction(function=launch_setup)
+        OpaqueFunction(function=launch_setup),
     ])
