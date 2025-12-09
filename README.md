@@ -81,18 +81,35 @@ RexROV + Dual Arms          ROV with both Oberon4 and Oberon7
 
 ## Manipulators: Oberon4 and Oberon7
 
-  Arm              DOF   Description
-  ---------------- ----- --------------------------------------------
-  Oberon4          4     ROV-mounted arm with jaw gripper
-  Oberon7          7     Serial arm with wrist and parallel gripper
-  Dual-arm setup   11    Combined Oberon4 and Oberon7 on RexROV
+<table>
+  <tr>
+    <th>Arm</th>
+    <th>DOF</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><b>Oberon4</b></td>
+    <td>4</td>
+    <td>ROV-mounted arm with jaw gripper</td>
+  </tr>
+  <tr>
+    <td><b>Oberon7</b></td>
+    <td>7</td>
+    <td>Serial arm with wrist and parallel gripper</td>
+  </tr>
+  <tr>
+    <td><b>Dual-arm setup</b></td>
+    <td>11</td>
+    <td>Combined Oberon4 and Oberon7 on RexROV</td>
+  </tr>
+</table>
 
 ### Control and Kinematics Support
 
--   gazebo_ros2_control integration\
--   joint_state_broadcaster\
--   Position and effort controllers\
--   Gripper control (jaw and parallel)\
+-   gazebo_ros2_control integration
+-   joint_state_broadcaster
+-   Position and effort controllers
+-   Gripper control (jaw and parallel)
 -   Forward and inverse kinematics services
 
 ------------------------------------------------------------------------
@@ -219,10 +236,11 @@ python3 custom_algorithms/my_sac_train.py
 
 ## Requirements
 
--   ROS 2 Foxy\
--   Gazebo Classic 11\
--   Python 3.8 or newer\
+-   ROS 2 Foxy
+-   Gazebo Classic 11
+-   Python 3.8 or newer
 -   Colcon build tools
+-   kdl_parser_py
 
 ------------------------------------------------------------------------
 
@@ -244,10 +262,10 @@ source install/setup.bash
 
 Contributions are welcome in:
 
--   New vehicle models\
--   Sonar and sensor simulation\
--   Manipulation and dual-arm coordination\
--   Reinforcement learning benchmarks\
+-   New vehicle models
+-   Sonar and sensor simulation
+-   Manipulation and dual-arm coordination
+-   Reinforcement learning benchmarks
 -   Documentation and tutorials
 
 ------------------------------------------------------------------------
