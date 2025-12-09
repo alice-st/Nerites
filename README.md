@@ -18,14 +18,7 @@ Nerites currently includes the following vehicles:
 - **ECA A9** (https://uuvsimulator.github.io/packages/eca_a9/docs/packages/eca_a9_description/)
 - **Twin GRAALTech X300** (https://www.graaltech.com/products/x-300-auv/)
 - **Oberon4** and **Oberon7** manipulators  (https://github.com/uuvsimulator/uuv_manipulators)
-- A **Gym-compatible RL framework** with **Soft Actor-Critic (SAC)** control training pipelines for:
-  - RexROV  
-  - ECA A9  
-  - X300  
-
-<p align="center">
-  <img width="600" src="images/nerites_banner.png">
-</p>
+- A **Gym-compatible RL framework** with **Soft Actor-Critic (SAC)** control training pipelines for RexROV, ECA_A9 and X300 vehicles.  
 
 ---
 
@@ -55,7 +48,23 @@ Nerites ports and extends the original UUV Simulator worlds to ROS 2:
 | **GRAALTech X300** | Compact hybrid AUV/ROV with hovering and profiling capability |
 
 <p align="center">
-  <img width="650" src="images/vehicles.png">
+  <img width="650" src="images/rexrov.png">
+</p>
+
+<p align="center">
+  <img width="650" src="images/eca_a9.png">
+</p>
+
+<p align="center">
+  <img width="650" src="images/x300.png">
+</p>
+
+<p align="center">
+  <img width="650" src="images/oberon4.png">
+</p>
+
+<p align="center">
+  <img width="650" src="images/oberon7.png">
 </p>
 
 All vehicles include hydrodynamic models, thruster layouts, sensor suites, ROS 2 interfaces and launch files.
