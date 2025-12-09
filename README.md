@@ -13,10 +13,10 @@ https://github.com/uuvsimulator/uuv_simulator
 
 The project focuses on:
 
--   Full ROS 1 to ROS 2 Foxy migration of underwater simulation tools\
--   Support for realistic AUV and ROV vehicle models\
--   Reinforcement learning for underwater control\
--   Underwater manipulation with Oberon robotic arms\
+-   Full ROS 1 to ROS 2 Foxy migration of underwater simulation tools
+-   Support for realistic AUV and ROV vehicle models
+-   Reinforcement learning for underwater control
+-   Underwater manipulation with Oberon robotic arms
 -   Multi-vehicle, sensor-rich simulation environments
 
 ------------------------------------------------------------------------
