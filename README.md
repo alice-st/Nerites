@@ -210,7 +210,7 @@ python3 custom_algorithms/my_sac_train.py
 ```
 
 <p align="center">
-  <img src="images/x300_training.gif" width="500" height="500">
+  <img src="images/x300_training.gif" width="700" height="700">
 </p>
 
 ------------------------------------------------------------------------
