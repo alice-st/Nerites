@@ -208,9 +208,10 @@ SETTINGS_PATH = "settings/settings_x300.txt"
 ``` bash
 python3 custom_algorithms/my_sac_train.py
 ```
-  <p align="center">
-    <img src="images/training_x300.gif" width="300" height="300">
-  </p>
+
+<p align="center">
+  <img src="images/training_x300.gif" width="300" height="300">
+</p>
 
 ------------------------------------------------------------------------
 
