@@ -31,7 +31,7 @@ def launch_setup(context, *args, **kwargs):
         launch_arguments={
             'world': 'worlds/auv_underwater_world.world',
             'pause': paused,
-            'use_sim_time': use_sim_time_str,   # Keep as string for gazebo arg passing
+            'use_sim_time': use_sim_time_str,
             'gui': gui,
             'headless': 'false',
             'debug': 'false',

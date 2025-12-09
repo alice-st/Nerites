@@ -1,16 +1,12 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
-from launch.actions import (
-    DeclareLaunchArgument,
-    GroupAction,
-)
+from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node, PushRosNamespace
 
 
 def generate_launch_description():
-    # Launch arguments
     uuv_name = LaunchConfiguration('uuv_name')
     arm_name = LaunchConfiguration('arm_name')
 
@@ -25,35 +21,34 @@ def generate_launch_description():
         description='Arm name (e.g. oberon4)',
     )
 
-    # Joints for which we want effort controllers
-    joint_suffixes = [
-        'azimuth',
-        'shoulder',
-        'wrist_joint',
-        'jaw_1_joint',
-        'jaw_2_joint',
+    # Controllers as defined in oberon4_ros2_control.yaml
+    controllers = [
+        'joint_state_broadcaster',
+        'oberon4_arm_controller',
     ]
 
-    spawners = []
+    def ctrl_name(name: str):
+        # YAML keys are exactly the controller names
+        return name
 
-    for joint in joint_suffixes:
-        # Controller name WITHOUT any slashes – valid as a ROS node name suffix
-        controller_name = [arm_name, '_', joint, '_controller']
-
-        spawners.append(
-            Node(
-                package='controller_manager',
-                executable='spawner.py',
-                name=['controller_spawner_', arm_name, '_', joint],
-                namespace=uuv_name,
-                output='screen',
-                arguments=[controller_name,'-c', 'controller_manager'],
-            )
+    controller_spawners = [
+        Node(
+            package='controller_manager',
+            executable='spawner.py',
+            name=['controller_spawner_', name],
+            output='screen',
+            arguments=[
+                ctrl_name(name),
+                '--controller-manager', '/controller_manager',
+            ],
         )
+        for name in controllers
+    ]
 
     group = GroupAction([
-        PushRosNamespace(uuv_name),  # /rexrov
-        *spawners,
+        # spawner nodes live under /<uuv_name>, controller_manager is global
+        PushRosNamespace(uuv_name),
+        *controller_spawners,
     ])
 
     return LaunchDescription([

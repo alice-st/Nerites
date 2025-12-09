@@ -1,0 +1,18 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    oberon4_arm_controller:
+      type: position_controllers/JointGroupPositionController
+
+oberon4_arm_controller:
+  ros__parameters:
+    joints:
+      - oberon4/azimuth
+      - oberon4/shoulder
+      - oberon4/wrist_joint
+      - oberon4/jaw_1_joint
+      - oberon4/jaw_2_joint

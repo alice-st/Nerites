@@ -53,18 +53,17 @@ def launch_setup(context, *args, **kwargs):
     # Depending on xacro version, this returns an XML string
     doc = xacro.process(xacro_file, mappings=mappings)
 
-    # URDF spawner
+    # URDF spawner: point explicitly to the *global* robot_description topic
     args = (
         f"-gazebo_namespace /gazebo "
         f"-x {x} -y {y} -z {z} "
         f"-R {roll} -P {pitch} -Y {yaw} "
-        f"-entity {namespace} -topic robot_description").split()
-
+        f"-entity {namespace} -topic /robot_description"
+    ).split()
 
     # Nodes
     group_actions = GroupAction([
         PushRosNamespace(namespace),
-
         # Spawn the entity into Gazebo using gazebo_ros spawn_entity.py
         Node(
             name='urdf_spawner',
@@ -73,21 +72,21 @@ def launch_setup(context, *args, **kwargs):
             output='screen',
             arguments=args,
             parameters=[{'use_sim_time': res}]
-        ),
-
-        # Robot state publisher with the URDF from xacro
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            respawn=True,
-            parameters=[
-                {'use_sim_time': res},
-                {'robot_description': doc}
-            ]
         )
     ])
+
+    # Global robot_state_publisher (no PushRosNamespace)
+    rsp_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',   # exactly this name
+        output='screen',
+        respawn=True,
+        parameters=[
+            {'use_sim_time': res},
+            {'robot_description': doc},  # same URDF string from xacro
+        ]
+    )
 
     # Arm parameters (kept as SetParameter)
     arms_params = [
@@ -101,8 +100,7 @@ def launch_setup(context, *args, **kwargs):
         'params',
         'robot_config.yaml'
     )
-    
-    # (arm_config_path is ready to be used where needed)
+
     # message_to_tf include
     message_to_tf = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -119,7 +117,7 @@ def launch_setup(context, *args, **kwargs):
         }.items()
     )
 
-    return [group_actions, *arms_params, message_to_tf]
+    return [group_actions, *arms_params, rsp_node, message_to_tf]
 
 
 def generate_launch_description():

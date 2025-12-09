@@ -50,32 +50,23 @@ def generate_launch_description():
         description='Exclusion button index (LB on Xbox 360)',
     )
     declare_axis_azimuth = DeclareLaunchArgument(
-        'axis_azimuth', default_value='3', description='Joystick axis for azimuth'
-    )
+        'axis_azimuth', default_value='3', description='Joystick axis for azimuth')
     declare_axis_shoulder = DeclareLaunchArgument(
-        'axis_shoulder', default_value='4', description='Joystick axis for shoulder'
-    )
+        'axis_shoulder', default_value='4', description='Joystick axis for shoulder')
     declare_axis_elbow = DeclareLaunchArgument(
-        'axis_elbow', default_value='1', description='Joystick axis for elbow'
-    )
+        'axis_elbow', default_value='1', description='Joystick axis for elbow')
     declare_axis_roll = DeclareLaunchArgument(
-        'axis_roll', default_value='6', description='Joystick axis for roll'
-    )
+        'axis_roll', default_value='6', description='Joystick axis for roll')
     declare_axis_pitch = DeclareLaunchArgument(
-        'axis_pitch', default_value='7', description='Joystick axis for pitch'
-    )
+        'axis_pitch', default_value='7', description='Joystick axis for pitch')
     declare_axis_yaw = DeclareLaunchArgument(
-        'axis_yaw', default_value='0', description='Joystick axis for wrist yaw'
-    )
+        'axis_yaw', default_value='0', description='Joystick axis for wrist yaw')
     declare_gripper_open_button = DeclareLaunchArgument(
-        'gripper_open_button', default_value='1', description='Gripper open button'
-    )
+        'gripper_open_button', default_value='1', description='Gripper open button')
     declare_gripper_close_button = DeclareLaunchArgument(
-        'gripper_close_button', default_value='2', description='Gripper close button'
-    )
+        'gripper_close_button', default_value='2', description='Gripper close button')
     declare_home_button = DeclareLaunchArgument(
-        'home_button', default_value='7', description='Home button index'
-    )
+        'home_button', default_value='7', description='Home button index')
 
     # --- Included launch files (ROS 2 .launch.py versions) ---
     oberon7_control_share = get_package_share_directory('oberon7_control')

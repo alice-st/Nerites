@@ -38,10 +38,10 @@ class JointPositionController(Node):
         # --- NEW: derive namespace and arm name like in KinematicsService ----
         # Namespace is expected to be /<uuv_name>/<arm_name>/
         ns_tokens = [item for item in self.get_namespace().split('/') if len(item) > 0]
+        
         if len(ns_tokens) != 2:
             raise RuntimeError(
-                'JointPositionController must be called in the manipulator namespace '
-                '(/<uuv_name>/<arm_name>)'
+                'JointPositionController must be called in the manipulator namespace (/<uuv_name>/<arm_name>)'
             )
 
         self._namespace = ns_tokens[0]
@@ -84,7 +84,6 @@ class JointPositionController(Node):
 
         # Default for the RB button of the XBox 360 controller
         self._deadman_button = int(self.get_parameter('deadman_button').value)
-
         # If these buttons are pressed, the arm will not move
         self._exclusion_buttons = self.get_parameter('exclusion_buttons').value
 
@@ -94,8 +93,7 @@ class JointPositionController(Node):
             for n in self._exclusion_buttons:
                 if not isinstance(n, (float, int)):
                     raise RuntimeError(
-                        'Exclusion buttons must be an integer index to the joystick button'
-                    )
+                        'Exclusion buttons must be an integer index to the joystick button')
             self._exclusion_buttons = [int(n) for n in self._exclusion_buttons]
         else:
             self._exclusion_buttons = []
@@ -213,14 +211,31 @@ class JointPositionController(Node):
     # -------------------------------------------------------------------------
     # Callbacks
     # -------------------------------------------------------------------------
-
     def _update(self):
         """Control loop: compute PID output and publish commands."""
-        pos = self._arm_interface.joint_angles
+        pos = self._arm_interface.joint_angles  # dict: {joint_name: angle}
         now = self._now()
-        for joint in pos:
-            error = self._reference_pos[joint] - pos[joint]
+
+        # Iterate over the joints we *want* to control
+        for joint, ref in self._reference_pos.items():
+            # Skip joints that have no state (e.g. oberon4/anchor)
+            if joint not in pos:
+                # Comment this out if it gets too spammy
+                self.get_logger().warn(
+                    f"Skipping joint '{joint}' because no state was received for it"
+                )
+                continue
+
+            # Extra safety: make sure we have a controller and a publisher
+            if joint not in self._controllers or joint not in self._command_topics:
+                self.get_logger().warn(
+                    f"Skipping joint '{joint}' because controller or command topic is missing"
+                )
+                continue
+
+            error = ref - pos[joint]
             u = self._controllers[joint].regulate(error, now)
+
             msg = Float64()
             msg.data = u
             self._command_topics[joint].publish(msg)
@@ -243,13 +258,31 @@ class JointPositionController(Node):
                     return
 
             # Home button -> go to home configuration
-            if self._home_button < len(joy_msg.buttons) and joy_msg.buttons[self._home_button]:
-                self._reference_pos = deepcopy(self._arm_interface.home)
+            if (
+                self._home_button < len(joy_msg.buttons)
+                and joy_msg.buttons[self._home_button]
+            ):
+                home_cfg = deepcopy(self._arm_interface.home)
+                # Only copy home values for joints we actually control
+                for joint, value in home_cfg.items():
+                    if joint in self._reference_pos:
+                        self._reference_pos[joint] = value
                 self._last_joy_update = self._now()
+
             else:
                 # Parse joystick input to set joint angle reference
-                for joint in self._arm_interface.joint_names:
-                    axis_idx = self._axes[joint]
+                # Iterate over joints we control, not all joint_names
+                for joint in self._reference_pos.keys():
+                    # Skip joints that have no axis mapping
+                    axis_idx = self._axes.get(joint, None)
+                    if axis_idx is None:
+                        # Not mapped to any joystick axis (e.g. oberon4/anchor)
+                        # Use debug to avoid spam
+                        self.get_logger().debug(
+                            f'No joystick axis configured for joint {joint}, skipping'
+                        )
+                        continue
+
                     if axis_idx >= len(joy_msg.axes):
                         self.get_logger().warn(
                             f'Axis index {axis_idx} out of range for joint {joint}'
@@ -257,14 +290,18 @@ class JointPositionController(Node):
                         continue
 
                     axis_val = joy_msg.axes[axis_idx]
+
+                    # Deadzone
                     if abs(axis_val) < 0.8:
                         continue
-                    else:
-                        self._reference_pos[joint] += self._axes_gain[joint] * axis_val
-                        # Check joint limits
-                        self._reference_pos[joint] = self._check_joint_limits(
-                            self._reference_pos[joint], joint
-                        )
+
+                    gain = self._axes_gain.get(joint, 0.0)
+                    self._reference_pos[joint] += gain * axis_val
+
+                    # Check joint limits
+                    self._reference_pos[joint] = self._check_joint_limits(
+                        self._reference_pos[joint], joint
+                    )
 
                 self._last_joy_update = self._now()
 

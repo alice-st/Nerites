@@ -5,8 +5,7 @@ import os
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    GroupAction,
+    GroupAction, IncludeLaunchDescription
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, TextSubstitution, Command
@@ -87,16 +86,13 @@ def generate_launch_description():
         'rexrov_oberon4.xacro'
     )
 
-    # If your xacro needs more arguments, add them here (e.g. arm_name, etc.)
     robot_description_cmd = Command([
         'xacro ', xacro_file,
         ' ', 'uuv_name:=', uuv_name,
         ' ', 'arm_name:=', arm_name,
     ])
-
-    # Tell ROS 2 this is a plain string, not YAML
     robot_description = ParameterValue(robot_description_cmd, value_type=str)
-
+    
     # -------------------------------------------------------------------------
     # Include joint effort controllers launch
     # -------------------------------------------------------------------------
@@ -121,16 +117,20 @@ def generate_launch_description():
     # -------------------------------------------------------------------------
     # kinematics_service node
     # -------------------------------------------------------------------------
-    # TODO: adjust base_link and tip_link to match your actual URDF link names.
     kinematics_service_node = Node(
         package='uuv_manipulators_kinematics',
         executable='kinematics_service.py',
         name='kinematics_service',
         output='screen',
+        remappings=[
+            # Feed manipulator interfaces with /<uuv_name>/joint_states
+            ('joint_states', ['/', uuv_name, '/joint_states']),
+            ('/joint_states', ['/', uuv_name, '/joint_states']),
+        ],
         parameters=[{
             'robot_description': robot_description,
-            'arms.oberon4.base_link': 'rexrov/base_link',   # <-- change if needed
-            'arms.oberon4.tip_link': 'jaw_1',               # <-- change if needed
+            'arms.oberon4.base_link': 'rexrov/base_link',
+            'arms.oberon4.tip_link': 'jaw_1',
         }],
     )
 
@@ -143,16 +143,23 @@ def generate_launch_description():
         name=['joint_position_controller_', arm_name],
         output='screen',
         remappings=[
+            # Joy comes from /<uuv_name>/joy
             ('joy', ['/', uuv_name, '/joy']),
+            # Joint states remap: node expects local "joint_states",
+            # we give it /<uuv_name>/joint_states from Gazebo.
+            ('joint_states', ['/', uuv_name, '/joint_states']),
+            ('/joint_states', ['/', uuv_name, '/joint_states']),
         ],
         parameters=[{
             'robot_description': robot_description,
             'exclusion_buttons': exclusion_button,
             'deadman_button': deadman_button,
             'home_button': home_button,
+
             # Arm kinematics parameters required by ArmInterface
             'arms.oberon4.base_link': 'rexrov/base_link',
-            'arms.oberon4.tip_link': 'jaw_1',              
+            'arms.oberon4.tip_link': 'jaw_1',
+
             'controller_config': {
                 'azimuth': {
                     'joint_input_axis': axis_azimuth,
@@ -191,7 +198,6 @@ def generate_launch_description():
     # -------------------------------------------------------------------------
     # gripper_controller node
     # -------------------------------------------------------------------------
-    # Inlines the same configuration you had in gripper_config.yaml
     gripper_controller_node = Node(
         package='uuv_manipulators_control',
         executable='gripper_controller.py',
@@ -199,10 +205,13 @@ def generate_launch_description():
         output='screen',
         remappings=[
             ('joy', ['/', uuv_name, '/joy']),
+            ('joint_states', ['/', uuv_name, '/joint_states']),
+            ('/joint_states', ['/', uuv_name, '/joint_states']),
         ],
         parameters=[{
             'robot_description': robot_description,
-            # Gripper config (flattened keys for ROS 2 params)
+
+            # Gripper config
             'gripper.type': 'jaw',
             'gripper.base': 'gripper_base',
             'gripper.links': ['jaw_1', 'jaw_2'],

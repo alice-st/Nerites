@@ -89,10 +89,6 @@ class GripperInterface(object):
         # ---------------------------------------------------------------------
         self._gripper_config = self._load_gripper_config()
 
-        self._node.get_logger().info("++++++++++++++++++ Gripper config ++++++++++++++++++")
-        self._node.get_logger().info(f"{self._gripper_config}")
-        self._node.get_logger().info("++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
         if not self._gripper_config:
             raise RuntimeError(
                 'Gripper configuration not given (parameters with prefix "gripper" are not set)'

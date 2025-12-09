@@ -13,5 +13,16 @@ ros2 launch uuv_descriptions upload_rexrov_oberon4.launch.py
 
 3. Launch the controller
 
-ros2 launch oberon4_control joint_effort_controllers.launch.py uuv_name:=rexrov
 ros2 launch oberon4_control joint_control.launch.py uuv_name:=rexrov
+
+
+4. poke it: 
+
+ros2 topic pub /oberon4_arm_controller/commands std_msgs/msg/Float64MultiArray "
+layout:
+  dim: []
+  data_offset: 0
+data: [0.8, 0.5, -0.3, 0.2, -0.2]
+" -1
+publisher: beginning loop
+publishing #1: std_msgs.msg.Float64MultiArray(layout=std_msgs.msg.MultiArrayLayout(dim=[], data_offset=0), data=[0.8, 0.5, -0.3, 0.2, -0.2])

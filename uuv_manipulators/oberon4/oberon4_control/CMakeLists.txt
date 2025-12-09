@@ -5,7 +5,7 @@ find_package(ament_cmake REQUIRED)
 
 # Install launch files (ROS 2 style)
 install(
-  DIRECTORY launch
+  DIRECTORY launch config
   DESTINATION share/${PROJECT_NAME}
   PATTERN "*~" EXCLUDE
 )
