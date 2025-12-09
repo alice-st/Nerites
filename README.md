@@ -204,12 +204,12 @@ ros2 launch uuv_tutorial_disturbances tutorial_timed_current.launch.py
 
 ## Reinforcement Learning Environment
 
-Base environment: - base_env.py
+**Base environment: - base_env.py**
 - reset() and step() API
 - Continuous action spaces
 - Rich observation spaces
 
-Vehicle-specific environments: 
+**Vehicle-specific environments:**
 
 - RexROV → rexrov_env.py
 - ECA A9 → eca_a9_env.py
