@@ -157,19 +157,19 @@ In Nerites, X300 is fully modeled in ROS 2 with:
 
 ### RexROV Trajectory Controllers (Verified in ROS 2 Foxy)
 
-Launch Gazebo world:
+**Launch Gazebo world:**
 
 ``` bash
 ros2 launch uuv_gazebo_worlds auv_underwater_world.launch.py
 ```
 
-Launch RexROV:
+**Launch RexROV:**
 
 ``` bash
 ros2 launch uuv_descriptions upload_rexrov_default.launch.py
 ```
 
-Available controllers:
+**Available controllers:**
 
 ``` bash
 ros2 launch uuv_trajectory_control rov_pid_controller.launch.py uuv_name:=rexrov
@@ -182,7 +182,7 @@ ros2 launch uuv_trajectory_control rov_ua_pid_controller.launch.py uuv_name:=rex
 ros2 launch uuv_trajectory_control rov_nmb_sm_controller.launch.py uuv_name:=rexrov model_name:=rexrov
 ```
 
-Send a waypoint file:
+**Send a waypoint file:**
 
 ``` bash
 ros2 launch uuv_control_utils send_waypoints_file.launch.py uuv_name:=rexrov
@@ -222,9 +222,9 @@ full-DOF control training.
 
 ## Training SAC Controllers
 
-1.  Select target vehicle: rexrov, eca_a9, or x300
+**1.  Select target vehicle: rexrov, eca_a9, or x300**
 
-2.  Set configuration path in:
+**2.  Set configuration path in:**
 
 ``` python
 SETTINGS_PATH = "settings/settings_rexrov.txt"
@@ -232,14 +232,14 @@ SETTINGS_PATH = "settings/settings_eca_a9.txt"
 SETTINGS_PATH = "settings/settings_x300.txt"
 ```
 
-3.  Configure:
+**3.  Configure:**
 
 -   Episode length
 -   Steps per episode
 -   Observation and action scaling
 -   SAC hyperparameters
 
-4.  Run training:
+**4.  Run training:**
 
 ``` bash
 python3 custom_algorithms/my_sac_train.py
