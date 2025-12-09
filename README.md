@@ -204,13 +204,15 @@ ros2 launch uuv_tutorial_disturbances tutorial_timed_current.launch.py
 
 ## Reinforcement Learning Environment
 
-Base environment: - base_env.py\
-- reset() and step() API\
-- Continuous action spaces\
+Base environment: - base_env.py
+- reset() and step() API
+- Continuous action spaces
 - Rich observation spaces
 
-Vehicle-specific environments: - RexROV → rexrov_env.py\
-- ECA A9 → eca_a9_env.py\
+Vehicle-specific environments: 
+
+- RexROV → rexrov_env.py
+- ECA A9 → eca_a9_env.py
 - X300 → x300_env.py
 
 A custom Soft Actor--Critic (SAC) implementation is included for
