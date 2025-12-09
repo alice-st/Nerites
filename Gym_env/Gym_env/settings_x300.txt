@@ -24,6 +24,7 @@ TARGET_SDF = "/home/alice/nerites_sim_ws/src/x300_description/models/target/mode
 POSE_TOPIC = "/pose_gt"
 
 THRUSTER_TOPIC_FMT = "/thrusters/id_{}/input"
+FIN_TOPIC_FMT = ""
 
 # ***********************************************************
 # if you are running inference turn this to False
@@ -35,6 +36,7 @@ headless = False
 render_mode = human
 uuv_name = "x300"
 num_thrusters = 10
+num_fins = 0
 number_of_target_waypoints = 2
 thruster_boost = 800.0
 control_period = 0.2

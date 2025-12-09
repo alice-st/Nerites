@@ -26,8 +26,8 @@ UUV_ENV_CLASS = "eca_a9_env"
 TRAIN_ENV_NAME = "training_env1"
 
 # CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_rexrov.txt"
-CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
-# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
+# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
+CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
 
 def load_config(config_path_str: str):
     """
@@ -92,6 +92,7 @@ if __name__ == "__main__":
     tau = float(cfg.get("tau", cfg.get("tau", 0.005)))
     alpha = float(cfg.get("alpha", cfg.get("alpha", 0.2)))
     lr = float(cfg.get("lr", cfg.get("lr", 3e-4)))
+    headless = bool(cfg.get("headless", cfg.get("headless", True)))
 
     # NormalizeEnv parameters
     obs_clip = float(cfg.get("obs_clip", cfg.get("obs_clip", 100.0)))
@@ -139,7 +140,7 @@ if __name__ == "__main__":
         parent_dir=str(parent_dir),
         uuv_env_class=UUV_ENV_CLASS,
         env_id=TRAIN_ENV_NAME,   # <- one namespace / robot
-        headless=True,
+        headless=headless,
         render_mode=None,
         launch_world=True,       # launch Gazebo once
     )

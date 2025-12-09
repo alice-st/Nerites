@@ -26,9 +26,9 @@ from utils import Velocity, Pose, str2bool, quat_to_rpy, load_settings_txt, _mak
 import random
 import json
 
-CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
+# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
 # CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_rexrov.txt"
-# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
+CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
 
 
 class BaseUUVEnv(gym.Env):
@@ -207,7 +207,8 @@ class BaseUUVEnv(gym.Env):
 
         time.sleep(5)
         gui_arg = "false" if self.headless else "true"
-       
+        self.node.get_logger().info(f"{self.headless}")
+
         if self.launch_world:
             self.node.get_logger().info(f"Launching Gazebo gui:={gui_arg}")
             self.gazebo_process = subprocess.Popen(
