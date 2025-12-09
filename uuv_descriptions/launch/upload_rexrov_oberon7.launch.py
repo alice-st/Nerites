@@ -1,19 +1,29 @@
+#!/usr/bin/env python3
+
 # Copyright (c) 2025 The Nerites Authors.
 # All rights reserved.
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, GroupAction, OpaqueFunction
+from launch.actions import (
+    DeclareLaunchArgument,
+    IncludeLaunchDescription,
+    GroupAction,
+    OpaqueFunction,
+)
 from launch.substitutions import LaunchConfiguration
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace, SetParameter
 from launch_ros.substitutions import FindPackageShare
 from ament_index_python.packages import get_package_share_directory
+
 from nerites_utils.time import is_sim_time
+
 import xacro
 import os
 
+
 def launch_setup(context, *args, **kwargs):
-    # Retrieve launch arguments
+    # Retrieve LaunchConfiguration values
     debug = LaunchConfiguration('debug').perform(context)
     namespace = LaunchConfiguration('namespace').perform(context)
     x = LaunchConfiguration('x').perform(context)
@@ -24,10 +34,10 @@ def launch_setup(context, *args, **kwargs):
     yaw = LaunchConfiguration('yaw').perform(context)
     use_ned_frame = LaunchConfiguration('use_ned_frame').perform(context)
 
-    # Sim time
-    sim_time = is_sim_time(return_param=False, use_subprocess=True)
+    # Get simulation time
+    res = is_sim_time(return_param=False, use_subprocess=True)
 
-    # Locate the xacro file
+    # Locate xacro file (Oberon7 version)
     xacro_file = os.path.join(
         get_package_share_directory('uuv_descriptions'),
         'robots',
@@ -36,63 +46,66 @@ def launch_setup(context, *args, **kwargs):
 
     inertial_ref = 'world_ned' if use_ned_frame.lower() == 'true' else 'world'
 
-    # Generate URDF string directly from xacro
+    # Use xacro to generate URDF in memory
     mappings = {
         'debug': debug,
         'namespace': namespace,
         'inertial_reference_frame': inertial_ref
     }
+    # Same API as Oberon4: returns XML string in your setup
     doc = xacro.process(xacro_file, mappings=mappings)
 
-    # URDF spawner
+    # URDF spawner: point explicitly to the *global* robot_description topic
     args = (
         f"-gazebo_namespace /gazebo "
         f"-x {x} -y {y} -z {z} "
         f"-R {roll} -P {pitch} -Y {yaw} "
-        f"-entity {namespace} -topic robot_description").split()
+        f"-entity {namespace} -topic /robot_description"
+    ).split()
 
-
-    # Build main group
+    # Nodes
     group_actions = GroupAction([
         PushRosNamespace(namespace),
 
-        # Spawn URDF model into Gazebo
+        # Spawn the entity into Gazebo using gazebo_ros spawn_entity.py
         Node(
             name='urdf_spawner',
             package='gazebo_ros',
             executable='spawn_entity.py',
             output='screen',
-            respawn=False,
             arguments=args,
-            parameters=[{'use_sim_time': sim_time}]
-        ),
-
-        # Robot state publisher (publishes TF tree)
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            name='robot_state_publisher',
-            output='screen',
-            respawn=False,
-            parameters=[
-                {'use_sim_time': sim_time},
-                {'robot_description': doc}
-            ]
+            parameters=[{'use_sim_time': res}]
         )
     ])
 
-    # Arm parameters
+    # Global robot_state_publisher (no PushRosNamespace)
+    rsp_node = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='robot_state_publisher',   # exactly this name
+        output='screen',
+        respawn=True,
+        parameters=[
+            {'use_sim_time': res},
+            {'robot_description': doc},  # same URDF string from xacro
+        ]
+    )
+
+    # Arm parameters (kept as SetParameter) – now for oberon7
     arms_params = [
         SetParameter(name=f"{namespace}/arms/n_arms", value=1),
         SetParameter(name=f"{namespace}/arms/names", value=['oberon7'])
     ]
 
-    oberon7_config_path = os.path.join(
+    # Arm configuration YAML (Oberon7)
+    arm_config_path = os.path.join(
         FindPackageShare('oberon7_description').perform(context),
-        'params', 'robot_config.yaml'
+        'params',
+        'robot_config.yaml'
     )
+    # (arm_config_path is ready if you need it later)
 
-    # Include message_to_tf.launch
+    # message_to_tf include
     message_to_tf = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(
@@ -108,7 +121,8 @@ def launch_setup(context, *args, **kwargs):
         }.items()
     )
 
-    return [group_actions, *arms_params, message_to_tf]
+    return [group_actions, *arms_params, rsp_node, message_to_tf]
+
 
 def generate_launch_description():
     return LaunchDescription([

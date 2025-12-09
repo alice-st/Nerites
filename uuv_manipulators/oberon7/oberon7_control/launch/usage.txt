@@ -13,10 +13,13 @@ ros2 launch uuv_descriptions upload_rexrov_oberon7.launch.py
 
 3. Launch the controller
 
-ros2 launch oberon7_control gripper_controllers.launch.py uuv_name:=rexrov
-ros2 launch oberon7_control joint_control.launch.py uuv_name:=rexrov
-ros2 launch oberon7_control joint_effort_controllers.launch.py uuv_name:=rexrov
-ros2 launch oberon7_control jt_cartesian_controller.launch.py uuv_name:=rexrov
+ros2 launch oberon4_control joint_control.launch.py uuv_name:=rexrov
 
+4. poke it:
 
-
+ros2 topic pub /oberon7_arm_controller/commands std_msgs/msg/Float64MultiArray "
+layout:
+  dim: []
+  data_offset: 0
+data: [1.0, 0.3, -0.5, 0.0, 0.2, 1.0]
+" -1

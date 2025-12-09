@@ -1,34 +1,34 @@
 #!/usr/bin/env python3
 
+import os
+
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
-    IncludeLaunchDescription,
-    GroupAction,
+    GroupAction, IncludeLaunchDescription
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, TextSubstitution, Command
 from launch_ros.actions import Node, PushRosNamespace
+from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
-
-import os
 
 
 def generate_launch_description():
-    # --- Launch arguments ---
+    # Launch arguments
     uuv_name = LaunchConfiguration('uuv_name')
     arm_name = LaunchConfiguration('arm_name')
     deadman_button = LaunchConfiguration('deadman_button')
     exclusion_button = LaunchConfiguration('exclusion_button')
+    gripper_open_button = LaunchConfiguration('gripper_open_button')
+    gripper_close_button = LaunchConfiguration('gripper_close_button')
+    home_button = LaunchConfiguration('home_button')
     axis_azimuth = LaunchConfiguration('axis_azimuth')
     axis_shoulder = LaunchConfiguration('axis_shoulder')
     axis_elbow = LaunchConfiguration('axis_elbow')
     axis_roll = LaunchConfiguration('axis_roll')
     axis_pitch = LaunchConfiguration('axis_pitch')
-    axis_yaw = LaunchConfiguration('axis_yaw')
-    gripper_open_button = LaunchConfiguration('gripper_open_button')
-    gripper_close_button = LaunchConfiguration('gripper_close_button')
-    home_button = LaunchConfiguration('home_button')
+    axis_wrist = LaunchConfiguration('axis_wrist')
 
     declare_uuv_name = DeclareLaunchArgument(
         'uuv_name',
@@ -42,127 +42,258 @@ def generate_launch_description():
     declare_deadman_button = DeclareLaunchArgument(
         'deadman_button',
         default_value='5',
-        description='Deadman button index (RB on Xbox 360)',
+        description='Deadman button index',
     )
     declare_exclusion_button = DeclareLaunchArgument(
         'exclusion_button',
         default_value='4',
-        description='Exclusion button index (LB on Xbox 360)',
+        description='Exclusion button index',
+    )
+    declare_gripper_open_button = DeclareLaunchArgument(
+        'gripper_open_button',
+        default_value='1',
+        description='Gripper open button index',
+    )
+    declare_gripper_close_button = DeclareLaunchArgument(
+        'gripper_close_button',
+        default_value='2',
+        description='Gripper close button index',
+    )
+    declare_home_button = DeclareLaunchArgument(
+        'home_button',
+        default_value='7',
+        description='Home button index',
     )
     declare_axis_azimuth = DeclareLaunchArgument(
-        'axis_azimuth', default_value='3', description='Joystick axis for azimuth')
-    declare_axis_shoulder = DeclareLaunchArgument(
-        'axis_shoulder', default_value='4', description='Joystick axis for shoulder')
-    declare_axis_elbow = DeclareLaunchArgument(
-        'axis_elbow', default_value='1', description='Joystick axis for elbow')
-    declare_axis_roll = DeclareLaunchArgument(
-        'axis_roll', default_value='6', description='Joystick axis for roll')
-    declare_axis_pitch = DeclareLaunchArgument(
-        'axis_pitch', default_value='7', description='Joystick axis for pitch')
-    declare_axis_yaw = DeclareLaunchArgument(
-        'axis_yaw', default_value='0', description='Joystick axis for wrist yaw')
-    declare_gripper_open_button = DeclareLaunchArgument(
-        'gripper_open_button', default_value='1', description='Gripper open button')
-    declare_gripper_close_button = DeclareLaunchArgument(
-        'gripper_close_button', default_value='2', description='Gripper close button')
-    declare_home_button = DeclareLaunchArgument(
-        'home_button', default_value='7', description='Home button index')
-
-    # --- Included launch files (ROS 2 .launch.py versions) ---
-    oberon7_control_share = get_package_share_directory('oberon7_control')
-
-    joint_effort_launch = os.path.join(
-        oberon7_control_share, 'launch', 'joint_effort_controllers.launch.py'
+        'axis_azimuth',
+        default_value='0',
+        description='Joystick axis for azimuth joint',
     )
-    gripper_controllers_launch = os.path.join(
-        oberon7_control_share, 'launch', 'gripper_controllers.launch.py'
+    declare_axis_shoulder = DeclareLaunchArgument(
+        'axis_shoulder',
+        default_value='1',
+        description='Joystick axis for shoulder joint',
+    )
+    declare_axis_elbow = DeclareLaunchArgument(
+        'axis_elbow',
+        default_value='3',
+        description='Joystick axis for elbow joint',
+    )
+    declare_axis_roll = DeclareLaunchArgument(
+        'axis_roll',
+        default_value='4',
+        description='Joystick axis for roll joint',
+    )
+    declare_axis_pitch = DeclareLaunchArgument(
+        'axis_pitch',
+        default_value='6',
+        description='Joystick axis for pitch joint',
+    )
+    declare_axis_wrist = DeclareLaunchArgument(
+        'axis_wrist',
+        default_value='7',
+        description='Joystick axis for wrist joint',
+    )
+
+    # -------------------------------------------------------------------------
+    # robot_description from xacro (rexrov + oberon7)
+    # -------------------------------------------------------------------------
+    xacro_file = os.path.join(
+        get_package_share_directory('uuv_descriptions'),
+        'robots',
+        'rexrov_oberon7.xacro'
+    )
+
+    # This mirrors the Oberon4 pattern; unused args in xacro are just ignored.
+    robot_description_cmd = Command([
+        'xacro ', xacro_file,
+        ' ', 'uuv_name:=', uuv_name,
+        ' ', 'arm_name:=', arm_name,
+    ])
+    robot_description = ParameterValue(robot_description_cmd, value_type=str)
+
+    # -------------------------------------------------------------------------
+    # Include joint effort/ros2_control controllers launch
+    # -------------------------------------------------------------------------
+    oberon7_control_share = get_package_share_directory('oberon7_control')
+    joint_effort_controllers_launch = os.path.join(
+        oberon7_control_share,
+        'launch',
+        'joint_effort_controllers.launch.py',
     )
 
     joint_effort_controllers = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(joint_effort_launch),
+        PythonLaunchDescriptionSource(joint_effort_controllers_launch),
         launch_arguments={
             'uuv_name': uuv_name,
             'arm_name': arm_name,
         }.items(),
     )
 
-    gripper_controllers = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(gripper_controllers_launch),
-        launch_arguments={
-            'uuv_name': uuv_name,
-            'arm_name': arm_name,
-            'exclusion_button': exclusion_button,
-            'deadman_button': deadman_button,
-            'open_button': gripper_open_button,
-            'close_button': gripper_close_button,
-        }.items(),
-    )
+    # Namespace: /<uuv_name>/<arm_name>
+    ns = [TextSubstitution(text=''), '/', uuv_name, '/', arm_name]
 
-    # --- Nodes under /<uuv_name>/<arm_name> ---
+    # -------------------------------------------------------------------------
+    # kinematics_service node
+    # -------------------------------------------------------------------------
     kinematics_service_node = Node(
         package='uuv_manipulators_kinematics',
         executable='kinematics_service.py',
         name='kinematics_service',
         output='screen',
+        remappings=[
+            # Feed manipulator interfaces with /<uuv_name>/joint_states
+            ('joint_states', ['/', uuv_name, '/joint_states']),
+            ('/joint_states', ['/', uuv_name, '/joint_states']),
+        ],
+        parameters=[{
+            'robot_description': robot_description,
+            # Arm kinematics namespace for Oberon7
+            'arms.oberon7.base_link': 'rexrov/base_link',
+            # TODO: pick the correct EE link for Oberon7 parallel gripper.
+            # If your tip link is e.g. 'finger_tip_left', set that here:
+            'arms.oberon7.tip_link': 'finger_tip_left',
+        }],
     )
 
+    # -------------------------------------------------------------------------
+    # joint_position_controller node (joystick → joint commands)
+    # -------------------------------------------------------------------------
     joint_position_controller_node = Node(
         package='uuv_manipulators_control',
         executable='joint_position_controller.py',
         name=['joint_position_controller_', arm_name],
         output='screen',
         remappings=[
+            # Joy comes from /<uuv_name>/joy
             ('joy', ['/', uuv_name, '/joy']),
+            # Joint states remap: node expects local "joint_states",
+            # we give it /<uuv_name>/joint_states from Gazebo.
+            ('joint_states', ['/', uuv_name, '/joint_states']),
+            ('/joint_states', ['/', uuv_name, '/joint_states']),
         ],
         parameters=[{
+            'robot_description': robot_description,
             'exclusion_buttons': exclusion_button,
             'deadman_button': deadman_button,
             'home_button': home_button,
+
+            # Arm kinematics parameters required by ArmInterface
+            'arms.oberon7.base_link': 'rexrov/base_link',
+            'arms.oberon7.tip_link': 'finger_tip_left',
+
+            # Per-joint topics (same pattern as Oberon4, but 6 DOF)
             'controller_config': {
                 'azimuth': {
                     'joint_input_axis': axis_azimuth,
-                    'axis_gain': 0.01,
+                    'axis_gain': 0.008,
                     'topic': ['/', uuv_name, '/', arm_name, '/azimuth/controller/command'],
-                    'controller': {'p': 1000.0, 'i': 20.0, 'd': 50.0},
+                    'controller': {
+                        'p': 800.0,
+                        'i': 20.0,
+                        'd': 50.0,
+                    },
                 },
                 'shoulder': {
                     'joint_input_axis': axis_shoulder,
-                    'axis_gain': 0.01,
+                    'axis_gain': 0.008,
                     'topic': ['/', uuv_name, '/', arm_name, '/shoulder/controller/command'],
-                    'controller': {'p': 1000.0, 'i': 20.0, 'd': 50.0},
+                    'controller': {
+                        'p': 800.0,
+                        'i': 20.0,
+                        'd': 50.0,
+                    },
                 },
                 'elbow': {
                     'joint_input_axis': axis_elbow,
-                    'axis_gain': 0.01,
+                    'axis_gain': 0.008,
                     'topic': ['/', uuv_name, '/', arm_name, '/elbow/controller/command'],
-                    'controller': {'p': 1000.0, 'i': 20.0, 'd': 50.0},
+                    'controller': {
+                        'p': 800.0,
+                        'i': 20.0,
+                        'd': 50.0,
+                    },
                 },
                 'roll': {
                     'joint_input_axis': axis_roll,
-                    'axis_gain': 0.01,
+                    'axis_gain': 0.008,
                     'topic': ['/', uuv_name, '/', arm_name, '/roll/controller/command'],
-                    'controller': {'p': 300.0, 'i': 10.0, 'd': 20.0},
+                    'controller': {
+                        'p': 400.0,
+                        'i': 10.0,
+                        'd': 20.0,
+                    },
                 },
                 'pitch': {
                     'joint_input_axis': axis_pitch,
-                    'axis_gain': 0.1,
+                    'axis_gain': 0.008,
                     'topic': ['/', uuv_name, '/', arm_name, '/pitch/controller/command'],
-                    'controller': {'p': 300.0, 'i': 10.0, 'd': 0.0},
+                    'controller': {
+                        'p': 400.0,
+                        'i': 10.0,
+                        'd': 20.0,
+                    },
                 },
                 'wrist': {
-                    'joint_input_axis': axis_yaw,
-                    'axis_gain': 0.01,
+                    'joint_input_axis': axis_wrist,
+                    'axis_gain': 0.05,
                     'topic': ['/', uuv_name, '/', arm_name, '/wrist/controller/command'],
-                    'controller': {'p': 200.0, 'i': 10.0, 'd': 0.0},
+                    'controller': {
+                        'p': 300.0,
+                        'i': 5.0,
+                        'd': 5.0,
+                    },
                 },
             },
         }],
     )
 
-    group_arm = GroupAction([
-        PushRosNamespace([uuv_name, '/', arm_name]),
+    # -------------------------------------------------------------------------
+    # (Optional) gripper_controller node for Oberon7 parallel gripper
+    # You can adapt this once you confirm the gripper joint/link names.
+    # -------------------------------------------------------------------------
+    # gripper_controller_node = Node(
+    #     package='uuv_manipulators_control',
+    #     executable='gripper_controller.py',
+    #     name=['gripper_controller_', arm_name],
+    #     output='screen',
+    #     remappings=[
+    #         ('joy', ['/', uuv_name, '/joy']),
+    #         ('joint_states', ['/', uuv_name, '/joint_states']),
+    #         ('/joint_states', ['/', uuv_name, '/joint_states']),
+    #     ],
+    #     parameters=[{
+    #         'robot_description': robot_description,
+    #
+    #         # TODO: update these to match parallel_gripper.xacro
+    #         'gripper.type': 'parallel',
+    #         'gripper.base': 'gripper_base',
+    #         'gripper.links': ['finger_left', 'finger_right'],
+    #         'gripper.control_joint': 'finger_left_joint',
+    #         'gripper.mimic_joint': 'finger_right_joint',
+    #         'gripper.mimic_joint_gain': 1.0,
+    #         'gripper.closed_limit': 'upper',
+    #         'gripper.full_open_limit': 'lower',
+    #         'gripper.groups.left_finger.links': ['finger_left'],
+    #         'gripper.groups.left_finger.ee': 'finger_tip_left',
+    #         'gripper.groups.right_finger.links': ['finger_right'],
+    #         'gripper.groups.right_finger.ee': 'finger_tip_right',
+    #
+    #         'exclusion_buttons': exclusion_button,
+    #         'deadman_button': deadman_button,
+    #         'open_button': gripper_open_button,
+    #         'close_button': gripper_close_button,
+    #         'kp': 40.0,
+    #         'ki': 5.0,
+    #         'kd': 1.0,
+    #     }],
+    # )
+
+    group = GroupAction([
+        PushRosNamespace(ns),
         kinematics_service_node,
         joint_position_controller_node,
+        # gripper_controller_node,  # enable once gripper params are correct
     ])
 
     return LaunchDescription([
@@ -170,16 +301,15 @@ def generate_launch_description():
         declare_arm_name,
         declare_deadman_button,
         declare_exclusion_button,
+        declare_gripper_open_button,
+        declare_gripper_close_button,
+        declare_home_button,
         declare_axis_azimuth,
         declare_axis_shoulder,
         declare_axis_elbow,
         declare_axis_roll,
         declare_axis_pitch,
-        declare_axis_yaw,
-        declare_gripper_open_button,
-        declare_gripper_close_button,
-        declare_home_button,
+        declare_axis_wrist,
         joint_effort_controllers,
-        gripper_controllers,
-        group_arm,
+        group,
     ])

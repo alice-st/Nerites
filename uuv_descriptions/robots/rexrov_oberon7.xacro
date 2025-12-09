@@ -26,9 +26,12 @@
   <xacro:arg name="debug" default="0"/>
   <xacro:arg name="namespace" default="rexrov"/>
   <xacro:arg name="inertial_reference_frame" default="world"/>
+
   <!-- Include the ROV macro file -->
   <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov_base.xacro"/>
   <xacro:include filename="$(find uuv_descriptions)/urdf/rexrov.gazebo.xacro"/>
+
+  <!-- Include Oberon7 arm description -->
   <xacro:include filename="$(find oberon7_description)/robots/oberon7_default.xacro" />
 
   <!-- Create the ROV -->
@@ -49,15 +52,76 @@
     </gazebo>
   </xacro:rexrov_base>
 
+  <!-- Attach Oberon7 arm -->
   <xacro:oberon7 namespace="oberon7" parent="$(arg namespace)/base_link">
     <origin xyz="1.3 -0.5 -0.615" rpy="0 0 0"/>
   </xacro:oberon7>
 
+  <!-- ros2_control configuration for the Oberon7 arm in Gazebo -->
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <!-- Gazebo-side ros2_control system -->
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+
+    <!--
+      Joint names and interfaces MUST match:
+        * oberon7_default.xacro (oberon7_serial_arm)
+        * oberon7_ros2_control.yaml
+
+      Joints (namespace="oberon7"):
+        oberon7/azimuth
+        oberon7/shoulder
+        oberon7/elbow
+        oberon7/roll
+        oberon7/pitch
+        oberon7/wrist
+    -->
+
+    <joint name="oberon7/azimuth">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/shoulder">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/elbow">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/roll">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/pitch">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+
+    <joint name="oberon7/wrist">
+      <command_interface name="position"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+  </ros2_control>
+
+  <!-- Gazebo ros2_control plugin -->
   <gazebo>
-      <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
-        <robotNamespace>/$(arg namespace)</robotNamespace>
-        <robotParam>/$(arg namespace)/robot_description</robotParam>
-      </plugin>
+    <plugin name="gazebo_ros2_control" filename="libgazebo_ros2_control.so">
+      <robotNamespace>/$(arg namespace)</robotNamespace>
+      <robotParam>/$(arg namespace)/robot_description</robotParam>
+      <parameters>$(find oberon7_control)/config/oberon7_ros2_control.yaml</parameters>
+    </plugin>
   </gazebo>
 
   <!-- Joint state publisher plugin -->
