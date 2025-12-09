@@ -48,23 +48,11 @@ Nerites ports and extends the original UUV Simulator worlds to ROS 2:
 | **GRAALTech X300** | Compact hybrid AUV/ROV with hovering and profiling capability |
 
 <p align="center">
-  <img width="650" src="images/rexrov.png">
-</p>
-
-<p align="center">
-  <img width="650" src="images/eca_a9.png">
-</p>
-
-<p align="center">
-  <img width="650" src="images/x300.png">
-</p>
-
-<p align="center">
-  <img width="650" src="images/oberon4.png">
-</p>
-
-<p align="center">
-  <img width="650" src="images/oberon7.png">
+  <img src="images/rexrov.png" width="300">
+  <img src="images/eca_a9.png" width="300">
+  <img src="images/x300.png" width="300">
+  <img src="images/oberon4.png" width="300">
+  <img src="images/oberon7.png" width="300">
 </p>
 
 All vehicles include hydrodynamic models, thruster layouts, sensor suites, ROS 2 interfaces and launch files.
