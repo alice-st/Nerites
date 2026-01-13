@@ -87,10 +87,15 @@ Nerites ports and extends the original UUV Simulator environments to ROS
   <img src="images/rexrov.png" width="200" height="200">
   <img src="images/eca_a9.png" width="200" height="200">
   <img src="images/x300.png" width="200" height="200">
+</p>
+
+<p align="center">  
   <img src="images/oberon4.png" width="200" height="200">
   <img src="images/oberon7.png" width="200" height="200">
   <img src="images/arms.png" width="200" height="200">
 </p>
+
+*Overview of underwater vehicles: Top left: RexROV; Top middle: ECA A9 AUV; Top right: GRAALTech X300; Bottom left: RexROV + Oberon4; Bottom middle: RexROV + Oberon7; Bottom right: RexROV + Dual Arms (Oberon4 and Oberon7);*
 
 ------------------------------------------------------------------------
 
