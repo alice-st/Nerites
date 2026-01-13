@@ -19,10 +19,10 @@ from custom_algorithms.normalize_env import NormalizeEnv
 # pitch INFERENCE CONFIG
 # =========================
 ENV_ID = "Nerites_mission_planning-v1"
-UUV_ENV_CLASS = "eca_a9_env"        
+UUV_ENV_CLASS = "x300_env_predefined_waypoints"        
 EVAL_ENV_NAME = "inference_env1"
 
-agent_name = "eca_a9_agent"
+agent_name = "x300_agent"
 
 BASE_DIR = Path("trained_models")/agent_name
 PARENT_DIR = str(BASE_DIR)
@@ -31,7 +31,7 @@ MODEL_PATH = BASE_DIR / "best_auv_model.pth"
 NORM_STATS_PATH = BASE_DIR / "norm_stats_train.npz"
 
 # Inference rollout settings
-NUM_EPISODES = 100        # how many episodes to run
+NUM_EPISODES = 50        # how many episodes to run
 MAX_STEPS = 80            # should match your training max_steps
 HEADLESS = False          # set True for no GUI
 

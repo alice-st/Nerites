@@ -26,10 +26,9 @@ from utils import Velocity, Pose, str2bool, quat_to_rpy, load_settings_txt, _mak
 import random
 import json
 
-# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
+CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
 # CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_rexrov.txt"
-CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
-
+# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
 
 class BaseUUVEnv(gym.Env):
     """Base env: handles ROS bring-up, processes, services, pose, stepping, target spawn.
@@ -223,7 +222,7 @@ class BaseUUVEnv(gym.Env):
             )
 
         if self.evaluation_mode:
-            self.initial_x, self.initial_y, self.initial_z = self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["z"], self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["y"], self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["z"]
+            self.initial_x, self.initial_y, self.initial_z = self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["x"], self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["y"], self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["z"]
             self.initial_yaw = self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["yaw"]
             self.initial_pitch = self.initial_positions_and_targets["pairs"][self.epoch]["initial"]["pitch"]
         else:
@@ -231,6 +230,11 @@ class BaseUUVEnv(gym.Env):
             self.initial_yaw = random.uniform(-math.pi, math.pi)
             self.initial_pitch = 0
             # self.initial_pitch = random.uniform(-math.pi/2, math.pi/2)
+        
+        # Standard initial position
+        self.initial_x, self.initial_y, self.initial_z = 0.0, 0.0, -20.0
+        self.initial_yaw = 0.0
+        self.node.get_logger().info(f"{self.initial_x}, {self.initial_y}, {self.initial_z}")
 
         time.sleep(10)  
         self.robot_model_process = subprocess.Popen(
@@ -408,6 +412,11 @@ class BaseUUVEnv(gym.Env):
         else:
             self.initial_x, self.initial_y, self.initial_z = random.uniform(-20, 20), random.uniform(-20, 20), random.uniform(-20, -5)
             self.initial_yaw = random.uniform(-math.pi, math.pi)
+       
+        # Standard initial position
+        self.initial_x, self.initial_y, self.initial_z = 7.0, 0.0, -20.0
+        self.initial_yaw = 0.0
+        self.node.get_logger().info(f"{self.initial_x}, {self.initial_y}, {self.initial_z}")
 
         # Mark the reset moment BEFORE teleport so _pose_callback accepts only new odom
         self.reset_start_time = self.node.get_clock().now()

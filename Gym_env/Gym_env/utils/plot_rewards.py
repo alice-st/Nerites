@@ -4,6 +4,17 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+mpl.rcParams.update({
+    "font.size": 32,          # base font size
+    "axes.titlesize": 34,     # title
+    "axes.labelsize": 34,     # x/y labels
+    "xtick.labelsize": 32,    # x tick labels
+    "ytick.labelsize": 32,    # y tick labels
+    "legend.fontsize": 32,    # legend
+    "figure.titlesize": 34,
+})
 
 def read_table(path: Path) -> pd.DataFrame:
     # Try automatic sep detection; fall back to tab then comma
@@ -57,7 +68,7 @@ def main():
     # Choose x-axis
     if args.x == "global":
         df["x"] = np.arange(len(df)) + 1  # strictly increasing
-        xlabel = "Global step (monotonic)"
+        xlabel = "Training steps"
     elif args.x == "index":
         df["x"] = np.arange(len(df)) + 1
         xlabel = "Row index"
@@ -88,7 +99,7 @@ def main():
     plt.title("Reward and Moving Average")
     plt.xlabel(xlabel)
     plt.ylabel("Reward")
-    plt.legend()
+    plt.legend(loc="upper left")
     plt.tight_layout()
 
     if args.out:

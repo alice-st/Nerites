@@ -22,12 +22,12 @@ from normalize_env import NormalizeEnv
 
 # --- static env identifiers ---
 ENV_ID = "Nerites_mission_planning-v1"
-UUV_ENV_CLASS = "eca_a9_env"
+UUV_ENV_CLASS = "x300_env_predefined_waypoints"
 TRAIN_ENV_NAME = "training_env1"
 
 # CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_rexrov.txt"
-# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
-CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
+CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_eca_a9.txt"
+# CONFIG_PATH = "~/nerites_sim_ws/src/Nerites/Gym_env/Gym_env/settings_x300.txt"
 
 def load_config(config_path_str: str):
     """

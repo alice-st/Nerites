@@ -1,7 +1,7 @@
 # SAC parameters
 scenario_name = x300_agent
 number_of_episodes = 300
-max_steps = 100
+max_steps = 50
 test_episodes = 10
 test_max_steps = 100
 buffer_size = 1_000_000
@@ -28,7 +28,7 @@ FIN_TOPIC_FMT = ""
 
 # ***********************************************************
 # if you are running inference turn this to False
-evaluation_mode = False
+evaluation_mode = True
 # ***********************************************************
 
 evaluation_file = surge_pairs.json

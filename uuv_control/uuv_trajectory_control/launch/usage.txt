@@ -19,4 +19,4 @@ ros2 launch uuv_trajectory_control rov_nmb_sm_controller.launch.py uuv_name:=rex
 
 4. Send the waypoints:
 
-ros2 launch uuv_control_utils send_waypoints_file.launch.py uuv_name:=rexrov"
+ros2 launch uuv_control_utils send_waypoints_file.launch.py uuv_name:=rexrov
