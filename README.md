@@ -300,6 +300,7 @@ To be announced.
 
 ## Parent Repositories
 
+* ROS2 X300 single Vehicle Implementation: (https://bitbucket.org/isme_robotics/auv_core_ros2/src/main/) 
 * UUV Simulator: (https://github.com/uuvsimulator/uuv_simulator)
 * Plankton Simulator: (https://github.com/Liquid-ai/Plankton)
 * Eca A9 vehicle: (https://github.com/GSO-soslab/eca_a9_plankton)
