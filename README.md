@@ -293,7 +293,7 @@ Contributions are welcome in:
 ------------------------------------------------------------------------
 
 ## Citation
-
+```
 @INPROCEEDINGS{11598133,
   author={Stefanopoulou, Aliki and Kapsacheilis, Dimitris and Karatzinis, Georgios and Michailidis, Iakovos and Attia, Youssef and Wanderlingh, Francesco and Simetti, Enrico and Kosmatopoulos, Elias B. and Boutalis, Yiannis},
   booktitle={2026 34th Mediterranean Conference on Control and Automation (MED)}, 
@@ -304,7 +304,7 @@ Contributions are welcome in:
   pages={1010-1016},
   keywords={Modeling;Simulation;Vehicles;Equations;Printing;Learning (artificial intelligence);Training;Navigation;Middleware;Tagging},
   doi={10.1109/MED70602.2026.11598133}}
-
+```
 ------------------------------------------------------------------------
 
 ## Parent Repositories
