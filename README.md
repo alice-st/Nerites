@@ -294,7 +294,16 @@ Contributions are welcome in:
 
 ## Citation
 
-A. Stefanopoulou et al., "Nerites Framework: An Open-Source ROS2 Gym Environment for Intelligent Underwater Robotics," 2026 34th Mediterranean Conference on Control and Automation (MED), Ancona, Italy, 2026, pp. 1010-1016, doi: 10.1109/MED70602.2026.11598133. keywords: {Modeling;Simulation;Vehicles;Equations;Printing;Learning (artificial intelligence);Training;Navigation;Middleware;Tagging},
+@INPROCEEDINGS{11598133,
+  author={Stefanopoulou, Aliki and Kapsacheilis, Dimitris and Karatzinis, Georgios and Michailidis, Iakovos and Attia, Youssef and Wanderlingh, Francesco and Simetti, Enrico and Kosmatopoulos, Elias B. and Boutalis, Yiannis},
+  booktitle={2026 34th Mediterranean Conference on Control and Automation (MED)}, 
+  title={Nerites Framework: An Open-Source ROS2 Gym Environment for Intelligent Underwater Robotics}, 
+  year={2026},
+  volume={},
+  number={},
+  pages={1010-1016},
+  keywords={Modeling;Simulation;Vehicles;Equations;Printing;Learning (artificial intelligence);Training;Navigation;Middleware;Tagging},
+  doi={10.1109/MED70602.2026.11598133}}
 
 ------------------------------------------------------------------------
 
